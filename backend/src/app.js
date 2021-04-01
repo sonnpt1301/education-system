@@ -1,22 +1,25 @@
 import './env.js';
 import './mongoose.js';
 
-import express from 'express';
-import morgan from 'morgan';
-
+import express from 'express'
+import morgan from 'morgan'
 import route from './routes/index.js';
-import { notFound, errorHandler } from './middlewares/index.js';
+import { allowCors, notFound, errorHandler } from './middlewares/index.js';
 
 import path from 'path'
 
 const app = express();
 app.set('port', process.env.PORT);
 
+app.all('*', allowCors);
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 const __dirname = path.resolve()
 app.set('views', path.join(__dirname, 'views'))
+
+
+
 // routing API
 route(app);
 

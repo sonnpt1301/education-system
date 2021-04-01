@@ -25,7 +25,7 @@ export const listUser = async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const skip = parseInt(req.query.skip, 10) || 0;
 
-    const { statusCode, message, data } = await listUserService(query, limit, skip);
+    const { statusCode, message, data } = await listUserService(query, limit, skip, req.user);
 
     return res.status(statusCode).send({ statusCode, message, data });
 };

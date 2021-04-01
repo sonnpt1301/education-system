@@ -15,6 +15,10 @@ export const sanitizeUpdateData = (data) => {
         result['profile.lastName'] = data.profile.lastName;
     }
 
+    if (data.profile.role) {
+        result['profile.role'] = data.profile.role;
+    }
+
     if (data.profile.city) {
         result['profile.city'] = data.profile.city;
     }

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
     "browser-image-compression": "^1.0.14",
     "cra-template": "1.1.2",
     "moment": "^2.29.1",

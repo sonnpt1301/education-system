@@ -38,7 +38,7 @@ export const loginAuthentication = async ({ email, password }) => {
     return response;
 };
 
-export const listUserService = async (filter = {}, limit, skip) => {
+export const listUserService = async (filter = {}, limit, skip, currentUser) => {
     const response = {
         statusCode: 200,
         message: 'Listing users successful',
@@ -46,8 +46,16 @@ export const listUserService = async (filter = {}, limit, skip) => {
     };
 
     try {
-        const total = await User.countDocuments(filter);
-        const users = await User.find(filter)
+        const filterUserList = {
+            ...filter,
+            isDeleted: false,
+            _id: {
+                $ne: currentUser._id
+            }
+        };
+
+        const total = await User.countDocuments(filterUserList);
+        const users = await User.find(filterUserList)
             .limit(limit)
             .skip(skip);
 
@@ -165,7 +173,8 @@ export const deleteUserService = async ({ userId }) => {
                 city: '',
                 address: '',
                 phone: '',
-            }
+            },
+            isDeleted: true,
         }, { new: true });
         if (!user) {
             return {

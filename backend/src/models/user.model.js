@@ -24,6 +24,7 @@ const UserSchema = new mongoose.Schema({
             default: 'default_avatar.jpg',
         },
     },
+    isDeleted: { type: Boolean, default: false }
 }, { timestamps: true });
 
 UserSchema.pre('save', async function save(next) {

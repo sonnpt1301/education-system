@@ -1,6 +1,17 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router'
+import { logoutAction } from '../../actions'
 
 const Header = () => {
+    const dispatch = useDispatch()
+    const history = useHistory();
+
+    const logout = () => {
+        dispatch(logoutAction())
+        history.push('/login');
+    }
+
     return (
         <header class="topbar-nav">
             <nav class="navbar navbar-expand">
@@ -163,7 +174,7 @@ const Header = () => {
                             <li class="dropdown-divider"></li>
                             <li class="dropdown-item"><i class="icon-settings mr-2"></i> Setting</li>
                             <li class="dropdown-divider"></li>
-                            <li class="dropdown-item"><i class="icon-power mr-2"></i> Logout</li>
+                            <li className="dropdown-item"><div onClick={logout} style={{ cursor: 'pointer' }}><i className="icon-power mr-2"></i> Logout</div></li>
                         </ul>
                     </li>
                 </ul>
