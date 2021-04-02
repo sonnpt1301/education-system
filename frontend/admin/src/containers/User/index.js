@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
+import { Col, Form, Row } from 'react-bootstrap'
+import ReactPaginate from 'react-paginate'
 import { useDispatch, useSelector } from 'react-redux'
 import { createUserAction, deleteUserAction, getListUserAction, updateUserAction } from '../../actions/user.action'
-import Layout from '../../components/Layout'
-import Loader from '../../components/common/Loader'
-import { Button, Col, Row } from 'react-bootstrap'
 import Input from '../../components/common/Input'
-import Modal from '../../components/common/Modal'
+import Loader from '../../components/common/Loader'
 import Message from '../../components/common/Message'
+import Modal from '../../components/common/Modal'
+import Layout from '../../components/Layout'
+
 
 const User = () => {
 
@@ -38,6 +40,14 @@ const User = () => {
 
     const handleCloseDeleteModal = () => setShowDeleteModal(false)
 
+
+
+
+    const handlePageChange = (page) => {
+        let selected = page.selected;
+        let skip = Math.ceil(selected * limit);
+        setSkip(skip);
+    };
 
     const dispatch = useDispatch()
     const {
@@ -167,6 +177,10 @@ const User = () => {
             isDeleted: false,
         }))
     }, [limit, skip, loadingCreate, loadingUpdate, loadingDelete])
+
+    useEffect(() => {
+        userList && setTotal(userList?.total || 0);
+    }, [userList]);
 
     return (
         <Layout>
@@ -381,13 +395,13 @@ const User = () => {
                 {loadingCreate && <Loader />}
                 {errorCreate && <Message variant="danger">{errorCreate}</Message>}
                 {createMessage && <Message variant="success">{createMessage}</Message>}
-                <button type="submit" className="btn btn-danger px-5" onClick={deleteUserHandler}
-                ><i className="icon-lock"></i>
-                    Delete Permanently
-                    </button>
-                <button type="submit" className="btn btn-light px-5" onClick={handleCloseDeleteModal}
-                ><i className="icon-lock"></i>
+                <button type="submit" className="btn btn-light px-5" style={{marginRight: '50px'}} onClick={handleCloseDeleteModal}
+                ><i></i>
                     Cancel
+                    </button>
+                <button type="submit" className="btn btn-danger px-5" onClick={deleteUserHandler}
+                ><i className="fa fa-trash"></i>
+                    Delete Permanently
                     </button>
             </Modal>
 
@@ -405,6 +419,22 @@ const User = () => {
                                 <div class="card-header"><i class="fa fa-table"></i> Total Users: {userList.total}</div>
                                 <div class="card-body">
                                     <div class="table-responsive">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-3">
+                                                <div class="dataTables_length" id="default-datatable_length">
+                                                    <label>
+                                                        Show
+                                                        <select name="default-datatable_length" aria-controls="default-datatable" class="form-control form-control-sm"
+                                                            value={limit} onChange={(e) => setLimit(e.target.value)}
+                                                        >
+                                                            <option key="10" value={10}>10</option>
+                                                            <option key="20" value={20}>20</option>
+                                                        </select>
+                                                        users
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <table id="default-datatable" class="table table-bordered">
                                             <thead>
                                                 <tr>
@@ -448,8 +478,38 @@ const User = () => {
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-5">
+                            <div class="dataTables_info" id="default-datatable_info" role="status" aria-live="polite">
+                                Showing {limit} of {total} users
+                    </div>
+                        </div>
+                        <div class="col-sm-12 col-md-7">
+                            <ReactPaginate
+                                previousLabel={'< Previous'}
+                                nextLabel={'Next >'}
+                                breakLabel={'...'}
+                                breakClassName={'page-item'}
+                                breakLinkClassName={'page-link'}
+                                pageCount={Math.ceil(total / limit)}
+                                marginPagesDisplayed={2}
+                                pageRangeDisplayed={2}
+                                onPageChange={handlePageChange}
+                                containerClassName={'pagination'}
+                                subContainerClassName={'page-item'}
+                                activeClassName={'page-item active'}
+                                nextClassName={'page-item'}
+                                nextLinkClassName={'page-link'}
+                                previousClassName={'page-item'}
+                                previousLinkClassName={'page-link'}
+                                pageClassNam={'page-item'}
+                                pageLinkClassName={'page-link'}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </Layout>
     )
 }

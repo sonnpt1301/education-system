@@ -18,7 +18,7 @@ const HorizontalMenu = () => {
 
                 <li>
                     <a href="javascript:;">
-                        <i class="zmdi zmdi-view-dashboard" aria-hidden="true"></i>
+                        <i class="fa fa-dashboard" aria-hidden="true"></i>
                         <span class="title">
                             <NavLink to="/">
                                 Dashboard
@@ -29,7 +29,7 @@ const HorizontalMenu = () => {
 
                 <li>
                     <a href="javascript:;">
-                        <i class="zmdi zmdi-view-dashboard" aria-hidden="true"></i>
+                        <i class="fa fa-user-circle" aria-hidden="true"></i>
                         <span class="title">
                             <NavLink to="/user">
                                 User
@@ -51,7 +51,7 @@ const HorizontalMenu = () => {
 
                 <li>
                     <a href="javascript:;">
-                        <i class="zmdi zmdi-view-dashboard" aria-hidden="true"></i>
+                        <i class="fa fa-book" aria-hidden="true"></i>
                         <span class="title">
                             <NavLink to="/course">
                                 Course
