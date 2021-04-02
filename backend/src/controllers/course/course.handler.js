@@ -23,7 +23,7 @@ export const createCourse = async (req, res) => {
 }
 
 export const updateCourse = async (req, res) => {
-    const { statusCode, message, data } = await updateCourseService(req.params.id, req.body)
+    const { statusCode, message, data } = await updateCourseService(req.params.id, req.body, req.user)
 
     return res.status(statusCode).send({ statusCode, message, data })
 }

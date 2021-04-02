@@ -7,10 +7,15 @@ export const getListCategoryService = async (filter = {}) => {
         data: {}
     }
     try {
+        const total = await Category.countDocuments({
+            ...filter,
+            isDeleted: false
+        })
         const categories = await Category.find({
             ...filter, isDeleted: false
         })
-        response.data = await Category.populate(categories, { path: 'createdBy', select: 'email profile' })
+        const category = await Category.populate(categories, { path: 'createdBy', select: 'email profile' })
+        response.data = { total, category }
     } catch (err) {
         response.statusCode = 500;
         response.message = err.message;

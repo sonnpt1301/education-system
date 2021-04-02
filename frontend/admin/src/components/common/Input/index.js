@@ -7,7 +7,7 @@ const Input = (props) => {
     switch (props.type) {
         case 'select':
             input = <Form.Group>
-                {props.label && <Form.Label>{props.label}</Form.Label>}
+                {props.label && <Form.Label>{props.label} {props.important && <span style={{ color: 'red' }}>*</span>}</Form.Label>}
                 <select
                     className="form-control form-control-sm"
                     defaultValue={props.value}
@@ -26,7 +26,7 @@ const Input = (props) => {
             break;
         case 'textarea':
             input = <div class="form-group">
-                <label>{props.label}</label>
+                <label>{props.label} {props.important && <span style={{ color: 'red' }}>*</span>}</label>
                 <textarea className="form-control"
                     rows={props.rows}
                     value={props.value}
@@ -38,7 +38,7 @@ const Input = (props) => {
             break;
         case 'file':
             input = <div class="form-group">
-                <label>{props.label}</label>
+                <label>{props.label} {props.important && <span style={{ color: 'red' }}>*</span>}</label>
                 <input type={props.type} className="form-control" placeholder={props.placeholder}
                     name={props.name}
                     onChange={props.onChange}
@@ -48,7 +48,7 @@ const Input = (props) => {
             break;
         default:
             input = <div class="form-group">
-                <label>{props.label}</label>
+                <label>{props.label} {props.important && <span style={{ color: 'red' }}>*</span>}</label>
                 <input type={props.type} className="form-control" placeholder={props.placeholder}
                     value={props.value}
                     onChange={props.onChange}

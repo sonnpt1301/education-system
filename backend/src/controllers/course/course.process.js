@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { mailer } from '../../common/mailer.js'
 import { Category } from '../../models/category.model.js'
 import { Course } from '../../models/course.model.js'
-import { listUserService } from '../user/user.process.js'
+import { User } from '../../models/user.model.js'
 import { sanitizeUpdateData } from './course.validator.js'
 
 
@@ -62,9 +62,25 @@ export const listCourseService = async (filter = {}, limit, skip) => {
             .skip(skip)
             .lean()
 
+        const statisticCourse = await Course.aggregate([
+            { $match: { ...filter } },
+            { $lookup: { from: 'categories', localField: 'category', foreignField: '_id', as: 'category_info' } },
+            { $unwind: '$category_info' },
+            {
+                $group: {
+                    _id: { category: '$category', 'categoryName': '$category_info.name' }, count: { $sum: 1 },
+                }
+            },
+            { $sort: { 'count': -1 } },
+        ])
+
         response.data = {
             total,
-            courses
+            limit,
+            skip,
+            totalPage: Math.ceil(total / limit),
+            data: courses,
+            statisticCourse
         }
     } catch (err) {
         response.statusCode = 500;
@@ -126,7 +142,7 @@ export const createCourseService = async (data, currentUser) => {
     return response
 }
 
-export const updateCourseService = async (courseId, data) => {
+export const updateCourseService = async (courseId, data, currentUser) => {
     const response = {
         statusCode: 200,
         message: 'Update course successful',
@@ -164,18 +180,18 @@ export const updateCourseService = async (courseId, data) => {
                 data: {}
             }
         }
-        if (course.status === 'on process') {
+        if (course.status === 'on process' && currentUser.profile.role === 'admin') {
 
-            const users = await listUserService()
+            const users = await User.find({ _id: { $ne: currentUser._id }, isDeleted: false })
 
-            const sendEmailForAllUser = users.data.data.filter(usr => usr.profile.role === 'student').map(async (usr) => {
+            const sendEmailForAllUser = users.filter(usr => usr.profile.role === 'student').map(async (usr) => {
                 const body = await renderFile('src/views/create-course.template.ejs', {
                     course_name: course.title,
                     category: course.category.name
                 })
 
                 await mailer({
-                    email: usr.email,
+                    email: usr?.email,
                     subject: 'New Course',
                     content: body,
                 });

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Col, Form, Row } from 'react-bootstrap'
 import ReactPaginate from 'react-paginate'
 import { useDispatch, useSelector } from 'react-redux'
-import { createCategoryAction, deleteCategoryAction, getListCategoryAction, updateCategoryAction } from '../../actions/category.action'
+import { createCategoryAction, deleteCategoryAction, getListCategoryAction, updateCategoryAction } from '../../actions'
 import Input from '../../components/common/Input'
 import Loader from '../../components/common/Loader'
 import Message from '../../components/common/Message'
@@ -129,10 +129,11 @@ const Category = () => {
                 <Row>
                     <Col sm={6}>
                         <Input
-                            label="First Name"
+                            label="Name"
                             placeholder={'Enter name'}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            important
                         />
                     </Col>
                 </Row>
@@ -161,6 +162,7 @@ const Category = () => {
                             label="Name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            important
                         />
                     </Col>
                 </Row>
@@ -182,7 +184,7 @@ const Category = () => {
                 {loadingCreate && <Loader />}
                 {errorCreate && <Message variant="danger">{errorCreate}</Message>}
                 {createMessage && <Message variant="success">{createMessage}</Message>}
-                <button type="submit" className="btn btn-light px-5" style={{marginRight: '50px'}} onClick={handleCloseDeleteModal}
+                <button type="submit" className="btn btn-light px-5" style={{ marginRight: '50px' }} onClick={handleCloseDeleteModal}
                 ><i></i>
                     Cancel
                     </button>
@@ -203,19 +205,22 @@ const Category = () => {
                         <div class="col-lg-12">
                             <button type="button" className="btn btn-light waves-effect waves-light m-1" onClick={handleShowCreateModal}>Create Category</button>
                             <div class="card">
+                            <div class="card-header"><i class="zmdi zmdi-view-dashboard"></i> Total Categoies: {categoryList.total}</div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table id="default-datatable" class="table table-bordered">
                                             <thead>
                                                 <tr>
+                                                    <th>No.</th>
                                                     <th>Name</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {
-                                                    categoryList && categoryList?.map((category, index) => (
-                                                        <tr>
+                                                    categoryList?.category && categoryList.category.map((category, index) => (
+                                                        <tr key={category._id}>
+                                                            <td>{index + 1}</td>
                                                             <td>{category.name}</td>
                                                             <td>
                                                                 <button data-toggle="modal" data-target="#updateModal" className="btn btn-light btn-sm waves-effect waves-light m-1"

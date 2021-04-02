@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Col, Form, Row } from 'react-bootstrap'
 import ReactPaginate from 'react-paginate'
 import { useDispatch, useSelector } from 'react-redux'
-import { createUserAction, deleteUserAction, getListUserAction, updateUserAction } from '../../actions/user.action'
+import { createUserAction, deleteUserAction, getListUserAction, updateUserAction } from '../../actions'
 import Input from '../../components/common/Input'
 import Loader from '../../components/common/Loader'
 import Message from '../../components/common/Message'
@@ -203,6 +203,7 @@ const User = () => {
                             placeholder={'Enter name'}
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
+                            important
                         />
                     </Col>
                     <Col sm={6}>
@@ -211,6 +212,7 @@ const User = () => {
                             value={lastName}
                             placeholder={'Last Name'}
                             onChange={(e) => setLastName(e.target.value)}
+                            important
                         />
                     </Col>
                 </Row>
@@ -231,6 +233,7 @@ const User = () => {
                             placeholder={'Email'}
                             onChange={(e) => setEmail(e.target.value)}
                             type="email"
+                            important
                         />
                     </Col>
                 </Row>
@@ -243,6 +246,7 @@ const User = () => {
                             value={password}
                             placeholder={'Password'}
                             onChange={(e) => setPassword(e.target.value)}
+                            important
                         />
                     </Col>
                     <Col sm={6}>
@@ -253,6 +257,7 @@ const User = () => {
                             options={roleBased}
                             onChange={(e) => setRole(e.target.value)}
                             placeholder={'Role'}
+                            important
                         />
                     </Col>
                 </Row>
@@ -301,6 +306,7 @@ const User = () => {
                             placeholder={'Enter name'}
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
+                            important
                         />
                     </Col>
                     <Col sm={6}>
@@ -309,6 +315,7 @@ const User = () => {
                             value={lastName}
                             placeholder={'Last Name'}
                             onChange={(e) => setLastName(e.target.value)}
+                            important
                         />
                     </Col>
                 </Row>
@@ -355,6 +362,7 @@ const User = () => {
                             options={roleBased}
                             onChange={(e) => setRole(e.target.value)}
                             placeholder={'Role'}
+                            important
                         />
                     </Col>
                 </Row>
@@ -395,7 +403,7 @@ const User = () => {
                 {loadingCreate && <Loader />}
                 {errorCreate && <Message variant="danger">{errorCreate}</Message>}
                 {createMessage && <Message variant="success">{createMessage}</Message>}
-                <button type="submit" className="btn btn-light px-5" style={{marginRight: '50px'}} onClick={handleCloseDeleteModal}
+                <button type="submit" className="btn btn-light px-5" style={{ marginRight: '50px' }} onClick={handleCloseDeleteModal}
                 ><i></i>
                     Cancel
                     </button>
@@ -416,28 +424,29 @@ const User = () => {
                         <div class="col-lg-12">
                             <button type="button" className="btn btn-light waves-effect waves-light m-1" onClick={handleShowCreateModal}>Create User</button>
                             <div class="card">
-                                <div class="card-header"><i class="fa fa-table"></i> Total Users: {userList.total}</div>
+                                <div class="card-header"><i class="fa fa-user-circle"></i> Total Users: {userList.total}</div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <div class="row">
                                             <div class="col-sm-12 col-md-3">
                                                 <div class="dataTables_length" id="default-datatable_length">
+                                                    Show
                                                     <label>
-                                                        Show
                                                         <select name="default-datatable_length" aria-controls="default-datatable" class="form-control form-control-sm"
                                                             value={limit} onChange={(e) => setLimit(e.target.value)}
                                                         >
                                                             <option key="10" value={10}>10</option>
                                                             <option key="20" value={20}>20</option>
                                                         </select>
-                                                        users
                                                     </label>
+                                                        users
                                                 </div>
                                             </div>
                                         </div>
                                         <table id="default-datatable" class="table table-bordered">
                                             <thead>
                                                 <tr>
+                                                    <th>No.</th>
                                                     <th>First Name</th>
                                                     <th>Last Name</th>
                                                     <th>Email</th>
@@ -451,7 +460,8 @@ const User = () => {
                                             <tbody>
                                                 {
                                                     userList?.data && userList.data.map((usr, index) => (
-                                                        <tr>
+                                                        <tr key={usr._id}>
+                                                            <td>{index + 1}</td>
                                                             <td>{usr.profile.firstName}</td>
                                                             <td>{usr.profile.lastName}</td>
                                                             <td>{usr.email}</td>
