@@ -61,6 +61,17 @@ export const listCourseService = async (filter = {}, limit, skip) => {
             .limit(limit)
             .skip(skip)
             .lean()
+        
+        const addTotalUser = courses.map(async (course) => {
+            const totalUser = await UserCourse.countDocuments({ courseId: course._id })
+            
+            return { 
+                ...course,
+                totalUser,
+            }
+        })
+        
+        await Promise.all(addTotalUser)
 
         const statisticCourse = await Course.aggregate([
             { $match: { ...filter } },
