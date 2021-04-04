@@ -193,22 +193,22 @@ export const updateCourseService = async (courseId, data, currentUser) => {
         }
         if (course.status === 'on process' && currentUser.profile.role === 'admin') {
 
-            const users = await User.find({ _id: { $ne: currentUser._id }, isDeleted: false })
-
-            const sendEmailForAllUser = users.filter(usr => usr.profile.role === 'student').map(async (usr) => {
-                const body = await renderFile('src/views/create-course.template.ejs', {
-                    course_name: course.title,
-                    category: course.category.name
-                })
-
-                await mailer({
-                    email: usr?.email,
-                    subject: 'New Course',
-                    content: body,
-                });
+            const users = await User.find({ 
+                _id: { $ne: currentUser._id }, 
+                isDeleted: false,
+                'profile.role': 'student',
             })
 
-            await Promise.all(sendEmailForAllUser)
+            const body = await renderFile('src/views/create-course.template.ejs', {
+                course_name: course.title,
+                category: course.category.name
+            })
+            
+            await mailer({
+                email: users.map(({ email }) => email),
+                subject: 'New Course',
+                content: body,
+            });
         }
 
         response.data = course
