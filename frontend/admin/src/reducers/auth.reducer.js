@@ -7,7 +7,12 @@ const initState = {
     authenticating: false,
     error: null,
     message: '',
-    loading: false
+    loading: false,
+    state: false,
+    loadingSendRequest: false, 
+    loadingResetPassword: false,
+    errorSendRequest: false,
+    errorResetPassword: false,
 }
 
 export default (state = initState, action) => {
@@ -36,6 +41,45 @@ export default (state = initState, action) => {
             break;
         case authConstants.LOGIN_RESET:
             state = { ...initState }
+            break;
+
+        case authConstants.RESET_PASSWORD_REQUEST:
+            state = {
+                ...state,
+                loadingSendRequest: true
+            }
+            break;
+        case authConstants.RESET_PASSWORD_SUCCESS:
+            state = {
+                ...state,
+                loadingSendRequest: false,
+            }
+            break;
+        case authConstants.RESET_PASSWORD_FAILURE:
+            state = {
+                ...state,
+                loadingSendRequest: false,
+                errorSendRequest: action.payload
+            }
+            break;
+        case authConstants.CREATE_NEW_PASSWORD_REQUEST:
+            state = {
+                ...state,
+                loadingResetPassword: true
+            }
+            break;
+        case authConstants.CREATE_NEW_PASSWORD_SUCCESS:
+            state = {
+                ...state,
+                loadingResetPassword: false,
+            }
+            break;
+        case authConstants.CREATE_NEW_PASSWORD_FAILURE:
+            state = {
+                ...state,
+                loadingResetPassword: false,
+                errorResetPassword: action.payload
+            }
             break;
     }
     return state

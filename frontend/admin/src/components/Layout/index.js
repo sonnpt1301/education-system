@@ -10,7 +10,7 @@ const Layout = (props) => {
             <HorizontalMenu />
             <div className="clearfix"></div>
             {props.children}
-            {/* <Footer /> */}
+            <Footer />
         </div>
     )
 }

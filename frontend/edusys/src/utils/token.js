@@ -4,6 +4,7 @@ export const getToken = () => {
     const token = localStorage.getItem('jwt');
 
     if (!token) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         const history = useHistory();
         history.push('/login');
     }

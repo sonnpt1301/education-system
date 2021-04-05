@@ -46,6 +46,7 @@ export const listUserService = async (filter = {}, limit, skip, currentUser) => 
     };
 
     try {
+        console.log(filter)
         const filterUserList = {
             ...filter,
             isDeleted: false,
@@ -242,7 +243,7 @@ export const forgotPasswordService = async ({ email }) => {
 
         const token = resetPasswordToken(user._id)
         user.passwordResetToken = token
-        const body = await renderFile('./email_templates/resetPassword.ejs', {
+        const body = await renderFile('src/views/reset-password.template.ejs', {
             first_name: user.profile.firstName,
             button_link: process.env.FRONT_END_URL + 'reset-password?token=' + token,
         })
@@ -254,6 +255,7 @@ export const forgotPasswordService = async ({ email }) => {
         });
 
         await user.save()
+        response.data = { state: true }
     } catch (err) {
         console.log(err);
         response.statusCode = 500;
@@ -263,32 +265,31 @@ export const forgotPasswordService = async ({ email }) => {
     return response
 }
 
-export const createPasswordService = async ({ newPass, confirmedPass, token }) => {
+export const createPasswordService = async (data) => {
     const response = {
         statusCode: 200,
         message: 'Success',
         data: {},
     };
     try {
-        const user = await User.findOne({ passwordResetToken: token })
-        console.log('token', token)
-        console.log('passwordResetToken', user.passwordResetToken)
-        if (!user || token !== user.passwordResetToken) {
+        const user = await User.findOne({ passwordResetToken: data.token })
+        console.log(user)
+        if (!user || data.token !== user.passwordResetToken) {
             return {
                 statusCode: 404,
                 message: 'Token not found',
                 data: {},
             };
         }
-        if (newPass.trim() !== confirmedPass.trim()) {
+        if (data.newPass.trim() !== data.confirmedPass.trim()) {
             return {
                 statusCode: 404,
                 message: 'Password do not match. Please double check your password and try again',
                 data: {},
             };
         }
- 
-        user.password = newPass
+
+        user.password = data.newPass
         user.passwordResetToken = null
         await user.save()
 

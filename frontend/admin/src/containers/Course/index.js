@@ -80,6 +80,7 @@ const Course = () => {
                                                 <option key="" value={''}>All</option>
                                                 <option key="on process" value={'on process'}>On process</option>
                                                 <option key="reject" value={'reject'}>Rejected</option>
+                                                <option key="accomplish" value={'accomplish'}>Accomplished</option>
                                             </select>
                                         </label>
                                             courses 
@@ -107,9 +108,10 @@ const Course = () => {
                                                             <td>{course.createdBy.profile.firstName + ' ' + course.createdBy.profile.lastName}</td>
                                                             <td>{formatDate(course.fromDate) + ' - ' + formatDate(course.toDate)}</td>
                                                             <td>
-                                                                {course.status === 'pending' && <Badge status='light'>Pending</Badge>}
+                                                                {course.status === 'pending' && <Badge status='warning'>Pending</Badge>}
                                                                 {course.status === 'on process' && <Badge status='success'>On process</Badge>}
                                                                 {course.status === 'reject' && <Badge status='danger'>Rejected</Badge>}
+                                                                {course.status === 'accomplish' && <Badge status='info'>Accomplish</Badge>}
                                                                 <span>{loadingUpdate && <Loader />}</span>
                                                             </td>
 
@@ -144,8 +146,6 @@ const Course = () => {
                                                                         </>
                                                                     )
                                                                 }
-
-
                                                             </td>
                                                         </tr>
                                                     ))

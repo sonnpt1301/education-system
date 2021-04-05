@@ -1,3 +1,7 @@
 .box{
     padding: 4px
 }
+
+.alert{
+    border-radius: 0;
+}

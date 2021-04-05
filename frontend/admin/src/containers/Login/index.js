@@ -7,11 +7,13 @@ import Message from '../../components/common/Message'
 
 const Login = () => {
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
     const dispatch = useDispatch()
     const auth = useSelector(state => state.auth)
     const { user } = auth
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [rememberPassword, setRememberPassword] = useState(false)
 
     const userLogin = (e) => {
         e.preventDefault()
@@ -21,6 +23,17 @@ const Login = () => {
         }
         console.log(user)
         dispatch(loginAction(user))
+    }
+
+    const handleRememberPassword = () => {
+        setRememberPassword(!rememberPassword)
+        if (rememberPassword && password !== '' && email !== '') {
+            localStorage.setItem('remember_email', JSON.stringify(email))
+            localStorage.setItem('remember_password', JSON.stringify(password))
+        } else {
+            localStorage.removeItem('remember_email')
+            localStorage.removeItem('remember_password')
+        }
     }
 
     if (auth.authenticate) {
@@ -66,7 +79,9 @@ const Login = () => {
                             <div class="form-row">
                                 <div class="form-group col-6">
                                     <div class="icheck-material-primary">
-                                        <input type="checkbox" id="user-checkbox" checked="" />
+                                        <input type="checkbox" id="user-checkbox" checked={rememberPassword}
+                                            onClick={handleRememberPassword}
+                                        />
                                         <label for="user-checkbox">Remember me</label>
                                     </div>
                                 </div>

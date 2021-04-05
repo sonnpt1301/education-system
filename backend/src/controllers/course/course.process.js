@@ -6,6 +6,8 @@ import { Course } from '../../models/course.model.js'
 import { User } from '../../models/user.model.js'
 import { sanitizeUpdateData } from './course.validator.js'
 
+import schedule from 'node-schedule'
+
 
 export const getCourseService = async (courseId) => {
     const response = {
@@ -61,17 +63,17 @@ export const listCourseService = async (filter = {}, limit, skip) => {
             .limit(limit)
             .skip(skip)
             .lean()
-        
-        const addTotalUser = courses.map(async (course) => {
-            const totalUser = await UserCourse.countDocuments({ courseId: course._id })
-            
-            return { 
-                ...course,
-                totalUser,
-            }
-        })
-        
-        await Promise.all(addTotalUser)
+
+        // const addTotalUser = courses.map(async (course) => {
+        //     const totalUser = await UserCourse.countDocuments({ courseId: course._id })
+
+        //     return { 
+        //         ...course,
+        //         totalUser,
+        //     }
+        // })
+
+        // await Promise.all(addTotalUser)
 
         const statisticCourse = await Course.aggregate([
             { $match: { ...filter } },
@@ -193,8 +195,8 @@ export const updateCourseService = async (courseId, data, currentUser) => {
         }
         if (course.status === 'on process' && currentUser.profile.role === 'admin') {
 
-            const users = await User.find({ 
-                _id: { $ne: currentUser._id }, 
+            const users = await User.find({
+                _id: { $ne: currentUser._id },
                 isDeleted: false,
                 'profile.role': 'student',
             })
@@ -203,7 +205,7 @@ export const updateCourseService = async (courseId, data, currentUser) => {
                 course_name: course.title,
                 category: course.category.name
             })
-            
+
             await mailer({
                 email: users.map(({ email }) => email),
                 subject: 'New Course',

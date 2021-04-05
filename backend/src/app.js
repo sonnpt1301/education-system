@@ -1,5 +1,6 @@
 import './env.js';
 import './mongoose.js';
+import './modules/index.js';
 
 import express from 'express'
 import morgan from 'morgan'

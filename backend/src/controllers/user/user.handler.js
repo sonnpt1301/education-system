@@ -67,11 +67,7 @@ export const forgotPassword = async (req, res) => {
 }
 
 export const createPassword = async (req, res) => {
-    const { statusCode, message, data } = await createPasswordService({
-        newPass: req.body.newPass,
-        confirmedPass: req.body.confirmedPass,
-        token: req.params.token
-    })
+    const { statusCode, message, data } = await createPasswordService(req.body)
 
     return res.status(statusCode).send({ statusCode, message, data })
 }

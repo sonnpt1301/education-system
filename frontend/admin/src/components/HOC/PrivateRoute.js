@@ -13,17 +13,18 @@ export const PrivateRoute = ({ component: Component, role, ...rest }) => {
         const token = localStorage.getItem('jwt');
         if (!token) {
             dispatch(logoutAction());
-            return (<Redirect to={`/login`} />)
+            history.push(`/login`)
         }
 
-        // // validate role
-        // if (role && user) {
-        //     if (role !== user.profile.role) {
-        //         dispatch(logoutAction());
-        //         return (<Redirect to={`/login`} />)
-        //     }
-        // }
-    }, [dispatch]);
+        // validate role
+        if (role && user) {
+            if (role !== user.profile.role) {
+                dispatch(logoutAction());
+                history.push(`/login`)
+
+            }
+        }
+    }, [dispatch, history]);
 
     return (
         <Route {...rest} render={props => <Component {...props} />} />

@@ -3215,10 +3215,10 @@ table.grid td {
     position: relative;
     padding: 0;
     margin-bottom: 1rem;
-    border: none;
+    /* border: none; */
 	  background-color: rgb(255, 255, 255);
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
-    border-radius: .25rem;
+    /* border-radius: .25rem; */
 }
 
 .alert .alert-icon {

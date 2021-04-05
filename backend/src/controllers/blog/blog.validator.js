@@ -12,6 +12,10 @@ export const queryBuilder = (data) => {
 
     if (data.status) {
         result.status = data.status;
+    } 
+    
+    if (data.course) {
+        result.course = data.course;
     }
 
     return result;

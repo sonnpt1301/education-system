@@ -51,14 +51,14 @@ const Category = () => {
 
 
     const handleShowUpdateModal = (e, id) => {
-        const category = categoryList.find(c => c._id === id)
+        const category = categoryList.category.find(c => c._id === id)
         setCategoryId(category._id)
         setName(category.name)
         setShowUpdateModal(true)
     }
 
     const handleShowDeleteModal = (e, id) => {
-        const category = categoryList.find(c => c._id === id)
+        const category = categoryList.category.find(c => c._id === id)
         console.log(category)
         setCategoryId(category._id)
         setShowDeleteModal(true)

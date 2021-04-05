@@ -41,27 +41,27 @@ export const queryBuilder = (query) => {
     }
 
     if (query.firstName) {
-        result.firstName = query.firstName;
+        result['profile.firstName'] = query.firstName;
     }
 
     if (query.lastName) {
-        result.lastName = query.lastName;
+        result['profile.lastName'] = query.lastName;
     }
 
     if (query.city) {
-        result.city = query.city;
+        result['profile.city'] = query.city;
     }
 
     if (query.address) {
-        result.address = query.address;
+        result['profile.address'] = query.address;
     }
 
     if (query.phone) {
-        result.phone = query.phone;
+        result['profile.phone'] = query.phone;
     }
 
     if (query.role) {
-        result.role = query.role;
+        result['profile.role'] = query.role;
     }
 
     return result;

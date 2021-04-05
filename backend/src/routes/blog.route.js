@@ -8,7 +8,7 @@ import * as blogController from '../controllers/blog/blog.handler.js';
 const router = express.Router();
 
 export default (prefix) => {
-    prefix.use('/blogs', verifyToken, router)
+    prefix.use('/blogs', verifyToken, validateRole(['tutors', 'student']), router)
 
     router.get('/:id', blogController.getBlog)
     router.get('/', blogController.listBlog)
