@@ -1,0 +1,22 @@
+.user-details {
+    border-bottom: none;
+    padding: 0px!important;
+}
+
+.door-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.user-icon {
+    width: 35px;
+    height: 35px;
+}
+
+.group-user {
+    padding-right: 10px
+}
+
+.count-user{
+    font-weight: bold;
+}
