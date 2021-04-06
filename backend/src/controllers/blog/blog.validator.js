@@ -18,6 +18,10 @@ export const queryBuilder = (data) => {
         result.course = data.course;
     }
 
+    if(data.createdBy){
+        result.createdBy = data.createdBy
+    }
+
     return result;
 };
 

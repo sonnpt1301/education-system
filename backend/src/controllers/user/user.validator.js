@@ -1,6 +1,7 @@
 import expressValidator from 'express-validator';
 
 export const sanitizeUserData = (user) => ({
+    _id: user._id,
     email: user.email,
     profile: user.profile,
 });

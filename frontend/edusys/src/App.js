@@ -10,16 +10,21 @@ import { PrivateRoute } from './components/HOC/PrivateRoute';
 import Home from './containers/Home';
 import Course from './containers/Course';
 import CourseDetail from './containers/Course/CourseDetail';
+import { logoutAction } from './actions';
+
+
 
 
 function App() {
+
+
   return (
     <Router>
       <Switch>
-        <Route path="/login" exact component={Login} />
-        <Route path="/reset-password" exact component={ResetPassword} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/reset-password" component={ResetPassword} />
 
-        <PrivateRoute exact path="/" role="student" component={Home} />
+        <PrivateRoute exact path="/" component={Home} />
         <PrivateRoute exact path="/course" component={Course} />
         <PrivateRoute exact path="/course-detail/:id" component={CourseDetail} />
         <Route path="*" component={() => "404 NOT FOUND"} />

@@ -15,7 +15,7 @@ const CourseDetail = ({ match }) => {
     const [currentCourse, setCurrentCourse] = useState({})
     const [tab, setTab] = useState(0)
 
-    console.log(tab)
+
 
     useEffect(() => {
         if (!courseDetail?.title || match.params.id !== courseDetail._id) {
