@@ -59,7 +59,6 @@ const Category = () => {
 
     const handleShowDeleteModal = (e, id) => {
         const category = categoryList.category.find(c => c._id === id)
-        console.log(category)
         setCategoryId(category._id)
         setShowDeleteModal(true)
     }
@@ -88,7 +87,7 @@ const Category = () => {
             }, 1000);
         }
 
-    }, [loadingCreate, errorCreate,]);
+    }, [loadingCreate, errorCreate]);
 
     useEffect(() => {
         if (!loadingUpdate && !errorUpdate) {
@@ -205,7 +204,7 @@ const Category = () => {
                         <div class="col-lg-12">
                             <button type="button" className="btn btn-light waves-effect waves-light m-1" onClick={handleShowCreateModal}>Create Category</button>
                             <div class="card">
-                            <div class="card-header"><i class="zmdi zmdi-view-dashboard"></i> Total Categoies: {categoryList.total}</div>
+                                <div class="card-header"><i class="zmdi zmdi-view-dashboard"></i> Total Categoies: {categoryList.total}</div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table id="default-datatable" class="table table-bordered">

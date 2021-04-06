@@ -56,8 +56,8 @@ export const sanitizeUpdateData = (data) => {
 
 
 export const createCourse = [
-    expressValidator.body('title').notEmpty().withMessage('title is required'),
-    expressValidator.body('description').notEmpty().withMessage('description is required'),
-    expressValidator.body('fromDate').notEmpty().withMessage('fromDate is required'),
-    expressValidator.body('toDate').notEmpty().withMessage('toDate is required')
+    expressValidator.body('title').notEmpty().withMessage('Title is required'),
+    expressValidator.body('description').notEmpty().withMessage('Description is required'),
+    expressValidator.body('fromDate').notEmpty().withMessage('FromDate is required'),
+    expressValidator.body('toDate').notEmpty().withMessage('ToDate is required')
 ]

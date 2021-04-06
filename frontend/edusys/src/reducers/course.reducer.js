@@ -65,7 +65,8 @@ export default (state = initState, action) => {
         case courseConstants.ADD_COURSE_SUCCESS:
             state = {
                 ...state,
-                loadingCreate: false
+                loadingCreate: false,
+                errorCreate: null
             }
             break;
         case courseConstants.ADD_COURSE_FAILURE:
@@ -84,7 +85,8 @@ export default (state = initState, action) => {
         case courseConstants.UPDATE_COURSE_SUCCESS:
             state = {
                 ...state,
-                loadingUpdate: false
+                loadingUpdate: false,
+                errorUpdate: null
             }
             break;
         case courseConstants.UPDATE_COURSE_FAILURE:

@@ -31,7 +31,8 @@ export default (state = initState, action) => {
         case blogConstants.GET_BLOGS_FAILURE:
             state = {
                 ...state,
-                error: action.payload
+                error: action.payload,
+                loading: false
             }
             break;
         case blogConstants.ADD_BLOG_REQUEST:
@@ -44,6 +45,7 @@ export default (state = initState, action) => {
             state = {
                 ...state,
                 loadingCreate: false,
+                errorCreate: null
             }
             break;
         case blogConstants.ADD_BLOG_FAILURE:

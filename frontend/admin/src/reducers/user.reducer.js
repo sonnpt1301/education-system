@@ -43,7 +43,8 @@ export default (state = initState, action) => {
         case userConstants.ADD_USER_SUCCESS:
             state = {
                 ...state,
-                loadingCreate: false
+                loadingCreate: false,
+                errorCreate: null
             }
             break;
         case userConstants.ADD_USER_FAILURE:
@@ -62,7 +63,8 @@ export default (state = initState, action) => {
         case userConstants.UPDATE_USER_SUCCESS:
             state = {
                 ...state,
-                loadingUpdate: false
+                loadingUpdate: false,
+                errorUpdate: null
             }
             break;
         case userConstants.UPDATE_USER_FAILURE:

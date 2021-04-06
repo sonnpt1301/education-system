@@ -9,6 +9,8 @@ import Modal from '../../components/common/Modal'
 import Input from '../../components/common/Input'
 import Message from '../../components/common/Message'
 import { Figure } from 'react-bootstrap'
+import FileViewer from 'react-file-viewer'
+import { FileIcon, defaultStyles } from 'react-file-icon'
 
 
 const Blog = ({ _id }) => {
@@ -29,11 +31,23 @@ const Blog = ({ _id }) => {
     const [isAttach, setIsAttach] = useState(false)
     const [message, setMessage] = useState('')
     const [showCreateModal, setShowCreateModal] = useState(false)
+    const [fileType, setFileType] = useState([])
+
+
+
     const handleCloseCreateModal = () => setShowCreateModal(false)
 
     const handleUploadBackgroundImage = (e) => {
         setBgImage(e.target.files[0])
         setPreviewBgImage(URL.createObjectURL(e.target.files[0]))
+    }
+
+    const handleUploadAttachFiles = (e) => {
+        let file = e.target.files
+        for (let i = 0; i < file.length; i++) {
+            files.push(file[i])
+            setFiles(files)
+        }
     }
 
     useEffect(() => {
@@ -44,7 +58,7 @@ const Blog = ({ _id }) => {
             }, 1000);
         }
 
-    }, [loadingCreate, errorCreate,]);
+    }, [loadingCreate, errorCreate]);
 
 
     const createBlogHandler = () => {
@@ -74,7 +88,6 @@ const Blog = ({ _id }) => {
             _id: _id
         }))
     }, [_id, loadingCreate])
-
 
 
     return (
@@ -131,13 +144,28 @@ const Blog = ({ _id }) => {
                 </Button>
                 {
                     isAttach && (
-                        <Input
-                            type='file'
-                            label='Attach File'
-                            name={files}
-                            onChange={(e) => setFiles(e.target.files[0])}
-                            lang="en"
-                        />
+                        <>
+                            <Input
+                                type='file'
+                                label='Attach File'
+                                name={files}
+                                onChange={handleUploadAttachFiles}
+                                lang="en"
+                                multiple
+                            />
+                            {
+                                files && files.map((file) => {
+                                    <>
+                                        <div style={{ width: '40px', height: '40px', display: 'inline-block', marginBottom: '15px' }}>
+                                            <FileIcon extension={file.name.split('.').pop()} {...defaultStyles[`${file.name.split('.').pop()}`]} />
+                                        </div>
+                                        <span style={{ paddingLeft: '10px' }}>{file.name}</span>
+                                        <br />
+                                    </>
+                                })
+                            }
+
+                        </>
                     )
                 }
                 <Button
@@ -159,6 +187,14 @@ const Blog = ({ _id }) => {
             >
                 New blog
             </Button>
+            <Button
+                icon='fa fa-plus-circle'
+                status='light'
+                onClick={() => setShowCreateModal(true)}
+                right
+            >
+                New blog
+            </Button>
             {
                 blogList?.blogs && blogList.blogs.map((blog, index) => (
                     <div className="card">
@@ -175,7 +211,18 @@ const Blog = ({ _id }) => {
                                         <h5 className="mt-0 mb-0">{blog.title}</h5>
                                         <div style={{ paddingBottom: '25px' }}><small style={{ color: 'rgb(172 170 170)' }}>{moment(blog.createdAt).fromNow()}</small></div>
                                         <p>{blog.content}</p>
-                                        <hr />
+                                        {
+                                            blog?.files?.map((file) => (
+                                                <div className="card">
+                                                    <div className="card-body">
+                                                        <div style={{ width: '40px', height: '40px', display: 'inline-block', marginBottom: '15px' }}>
+                                                            <FileIcon extension={file.fileName.split('.').pop()} {...defaultStyles[`${file.fileName.split('.').pop()}`]} />
+                                                        </div>
+                                                        <span style={{ paddingLeft: '10px' }}>{file.fileName}</span>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        }
                                     </div>
                                 </li>
                             </ul>

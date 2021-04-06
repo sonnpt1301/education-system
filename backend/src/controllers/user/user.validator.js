@@ -73,8 +73,8 @@ export const login = [
 ];
 
 export const createUser = [
-    expressValidator.body('email').isEmail().withMessage('email is required'),
-    expressValidator.body('password').notEmpty().withMessage('password is required'),
-    expressValidator.body('profile.firstName').notEmpty().withMessage('firstName is required'),
-    expressValidator.body('profile.lastName').notEmpty().withMessage('lastName is required'),
+    expressValidator.body('email').isEmail().withMessage('Email is required'),
+    expressValidator.body('password').notEmpty().withMessage('Password is required'),
+    expressValidator.body('profile.firstName').notEmpty().withMessage('FirstName is required'),
+    expressValidator.body('profile.lastName').notEmpty().withMessage('LastName is required'),
 ];

@@ -69,7 +69,7 @@ export const updateCategoryAction = ({ id, body }) => {
             })
         } catch (error) {
             dispatch({
-                type: categoryConstants.UPDATE_CATEGORY_REQUEST,
+                type: categoryConstants.UPDATE_CATEGORY_FAILURE,
                 payload: error.response?.data?.message || error.message,
             })
         }

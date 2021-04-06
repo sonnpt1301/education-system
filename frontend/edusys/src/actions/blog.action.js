@@ -38,6 +38,7 @@ export const getListBLogAction = (filter) => {
 export const createBlogAction = ({ body, bgImage, files }) => {
     return async dispatch => {
         try {
+            console.log(body, bgImage, files)
             dispatch({ type: blogConstants.ADD_BLOG_REQUEST })
             const token = getToken()
             // 1. create blog
@@ -66,11 +67,12 @@ export const createBlogAction = ({ body, bgImage, files }) => {
                     },
                 })
             }
-
             // 3. upload file (check if existed file)
-            if (files.name) {
+            if (files) {
                 const payloadFile = new FormData()
-                payloadFile.append('files', files)
+                files.map((file) => {
+                    payloadFile.append('files', file)
+                })
 
                 await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/blogs/${data._id}/files`, payloadFile, {
                     headers: {

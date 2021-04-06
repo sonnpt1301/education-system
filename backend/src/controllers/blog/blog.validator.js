@@ -51,6 +51,6 @@ export const sanitizeUpdateData = (data) => {
 }
 
 export const createBlog = [
-    expressValidator.body('title').notEmpty().withMessage('title is required'),
-    expressValidator.body('content').notEmpty().withMessage('content is required')
+    expressValidator.body('title').notEmpty().withMessage('Title is required'),
+    expressValidator.body('content').notEmpty().withMessage('Content is required')
 ]

@@ -43,7 +43,8 @@ export default (state = initState, action) => {
         case categoryConstants.ADD_CATEGORY_SUCCESS:
             state = {
                 ...state,
-                loadingCreate: false
+                loadingCreate: false,
+                errorCreate: null
             }
             break;
         case categoryConstants.ADD_CATEGORY_FAILURE:
@@ -62,7 +63,8 @@ export default (state = initState, action) => {
         case categoryConstants.UPDATE_CATEGORY_SUCCESS:
             state = {
                 ...state,
-                loadingUpdate: false
+                loadingUpdate: false,
+                errorUpdate: null,
             }
             break;
         case categoryConstants.UPDATE_CATEGORY_FAILURE:

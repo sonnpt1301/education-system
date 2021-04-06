@@ -12,7 +12,7 @@ export default (prefix) => {
 
     router.get('/:id', blogController.getBlog)
     router.get('/', blogController.listBlog)
-    router.post('/', blogValidator.createBlog, blogController.createBlog)
+    router.post('/', blogValidator.createBlog, validateRequest, blogController.createBlog)
     router.put('/:id', blogController.updateBlog)
     router.delete('/:id', blogController.deleteBlog)
     router.post('/:id/bg-image', multer({}).single('bgImage'), blogController.uploadBlogBgImg)
