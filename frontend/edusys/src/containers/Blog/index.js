@@ -23,6 +23,7 @@ const Blog = ({ _id }) => {
         loadingCreate,
         errorCreate
     } = useSelector(state => state.blog)
+    const { user } = useSelector(state => state.auth)
 
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
@@ -32,7 +33,6 @@ const Blog = ({ _id }) => {
     const [isAttach, setIsAttach] = useState(false)
     const [message, setMessage] = useState('')
     const [showCreateModal, setShowCreateModal] = useState(false)
-    const [fileType, setFileType] = useState([])
     const [tab, setTab] = useState(0)
     const [filter, setFilter] = useState('approve')
     const [showWaitingBlogModal, setShowWaitingBlogModal] = useState(false)
@@ -89,7 +89,7 @@ const Blog = ({ _id }) => {
         setTitle('')
         setContent('')
         setFiles([])
-        setBgImage([])
+        setBgImage({})
         setPreviewBgImage(null)
         setMessage('')
         setShowCreateModal(false)
@@ -107,8 +107,8 @@ const Blog = ({ _id }) => {
 
     return (
         <>
-            <div className="card">
-                <div className="card-body">
+            <div className="">
+                <div className="">
                     <ul className="nav nav-tabs nav-tabs-info nav-justified">
                         <li className="nav-item">
                             <a className="nav-link active" data-toggle="tab" onClick={() => setTab(0)} style={{ cursor: 'pointer' }}><i className="icon-home"></i> <span className="hidden-xs">Public blog</span></a>
@@ -184,7 +184,7 @@ const Blog = ({ _id }) => {
                                                     multiple
                                                 />
                                                 {
-                                                    files && files.map((file) => {
+                                                    files && files.map((file) => (
                                                         <>
                                                             <div style={{ width: '40px', height: '40px', display: 'inline-block', marginBottom: '15px' }}>
                                                                 <FileIcon extension={file.name.split('.').pop()} {...defaultStyles[`${file.name.split('.').pop()}`]} />
@@ -192,7 +192,7 @@ const Blog = ({ _id }) => {
                                                             <span style={{ paddingLeft: '10px' }}>{file.name}</span>
                                                             <br />
                                                         </>
-                                                    })
+                                                    ))
                                                 }
 
                                             </>
@@ -233,17 +233,21 @@ const Blog = ({ _id }) => {
                                         </Button>
 
                                     </div>
-                                    <div className="col-5">
-                                        <Button
-                                            icon='fa fa-clock-o'
-                                            status='light'
-                                            onClick={handleShowWaitingBlogModal}
-                                            right
-                                            long
-                                        >
-                                            Waiting for approving (1)
+                                    {
+                                        user.profile.role === 'tutors' && (
+                                            <div className="col-5">
+                                                <Button
+                                                    icon='fa fa-clock-o'
+                                                    status='light'
+                                                    onClick={handleShowWaitingBlogModal}
+                                                    right
+                                                    long
+                                                >
+                                                    Waiting for approving
                                         </Button>
-                                    </div>
+                                            </div>
+                                        )
+                                    }
                                 </div>
                                 {
                                     (blogList?.blogs?.length && !showWaitingBlogModal) ? blogList.blogs.map((blog, index) => (

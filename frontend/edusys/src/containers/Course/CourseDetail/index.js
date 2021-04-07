@@ -45,7 +45,7 @@ const CourseDetail = ({ match }) => {
                                     </ol>
                                 </div>
                             </div>
-                            <div className="card">
+                            <div className="card" style={{ marginBottom: '5px' }}>
                                 <div className="card-body">
 
                                     <blockquote className="blockquote">

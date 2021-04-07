@@ -55,6 +55,26 @@ export default (state = initState, action) => {
                 loadingCreate: false
             }
             break;
+        case blogConstants.UPDATE_BLOG_REQUEST:
+            state = {
+                ...state,
+                loadingUpdate: true
+            }
+            break;
+        case blogConstants.UPDATE_BLOG_SUCCESS:
+            state = {
+                ...state,
+                loadingUpdate: false,
+                errorUpdate: null
+            }
+            break;
+        case blogConstants.UPDATE_BLOG_FAILURE:
+            state = {
+                ...state,
+                errorUpdate: action.payload,
+                loadingUpdate: false
+            }
+            break;
     }
     return state
 }

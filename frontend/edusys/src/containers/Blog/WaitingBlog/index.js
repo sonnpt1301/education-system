@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getListBLogAction, createBlogAction } from '../../../actions/blog.action'
+import { getListBLogAction, createBlogAction, updateBlogStatusAction } from '../../../actions/blog.action'
 import moment from 'moment'
 import { AWS_FOLDER } from '../../../config'
 import Loader from '../../../components/common/Loader'
@@ -14,39 +14,91 @@ import { FileIcon, defaultStyles } from 'react-file-icon'
 const WaitingBlog = ({ showWaitingBlogModal, handleCloseWaitingBlogModal, status, courseId }) => {
 
     const dispatch = useDispatch()
-    const { blogList, loading } = useSelector(state => state.blog)
+    const { blogList, loading, loadingUpdate, errorUpdate } = useSelector(state => state.blog)
+
+    const [message, setMessage] = useState('')
+
+    const resetField = () => {
+        setMessage('')
+    }
+
+    useEffect(() => {
+        if (!loadingUpdate && !errorUpdate) {
+            setMessage('Approve successful');
+            setTimeout(() => {
+                resetField();
+            }, 1000);
+        }
+
+    }, [loadingUpdate, errorUpdate]);
+
+    const rejectBlogHandler = (id) => {
+        dispatch(updateBlogStatusAction({
+            id: id,
+            body: { status: 'reject' }
+        }))
+    }
+    const approveBlogHandler = (id) => {
+        dispatch(updateBlogStatusAction({
+            id: id,
+            body: { status: 'approve' }
+        }))
+    }
+
+
     useEffect(() => {
         dispatch(getListBLogAction({
             course: courseId,
             status: status
         }))
-    }, [])
+    }, [loadingUpdate])
 
     return (
         <Modal
-            modalTitle={'Waiting for approving'}
+            modalTitle={`Waiting for approving (${blogList.total}) `}
             show={showWaitingBlogModal}
             handleClose={handleCloseWaitingBlogModal}
             onHide={handleCloseWaitingBlogModal}
             size='lg'
         >
             {loading && <Loader />}
+            {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
+            {message && <Message variant="success">{message}</Message>}
             {
                 (blogList?.blogs?.length) ? blogList.blogs.map((blog, index) => (
                     <div className="card">
                         <div className="card-body">
-                            <div className="user-profile" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                <div><img src={`${AWS_FOLDER.IMAGE}${blog.createdBy.profile.avatar}`}
-                                    className="img-circle user-profile" alt="user avatar" /></div>
-                                <span><h5 className="mt-0 mb-1 ml-1">{blog.createdBy.profile.firstName + " " + blog.createdBy.profile.lastName}</h5></span>
+                            <div className="row">
+                                <div className="user-profile col-7" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                    <div><img src={`${AWS_FOLDER.IMAGE}${blog.createdBy.profile.avatar}`}
+                                        className="img-circle user-profile" alt="user avatar" /></div>
+                                    <span><h5 className="mt-0 mb-1 ml-1">{blog.createdBy.profile.firstName + " " + blog.createdBy.profile.lastName}</h5>
+                                    </span>
+                                </div>
+                                <div className='col-5'>
+                                    <div style={{ float: 'right' }}>
+                                        <Button
+                                            status='danger'
+                                            icon='fa fa-window-close'
+                                            small
+                                            onClick={() => rejectBlogHandler(blog._id)}
+                                        >
+                                        </Button>
+                                        <Button
+                                            status='success'
+                                            icon='fa fa-check-circle'
+                                            small
+                                            onClick={() => approveBlogHandler(blog._id)}
+                                        >
+                                        </Button>
+                                    </div>
+                                </div>
                             </div>
                             <img className="rounded" style={{ height: '100%', width: '100%' }} src={`${AWS_FOLDER.IMAGE}${blog.bgImage}`} alt="user avatar" />
                             <ul className="list-unstyled" key={index}>
                                 <li className="media">
                                     <div className="media-body">
-                                        <h5 className="mt-0 mb-0">{blog.title}
-                                            <Button></Button>
-                                        </h5>
+                                        <h5 className="mt-0 mb-0">{blog.title}</h5>
                                         <div style={{ paddingBottom: '25px' }}><small style={{ color: 'rgb(172 170 170)' }}>{moment(blog.createdAt).fromNow()}</small></div>
                                         <p>{blog.content}</p>
                                         {

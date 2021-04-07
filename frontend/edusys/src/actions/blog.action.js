@@ -95,7 +95,7 @@ export const createBlogAction = ({ body, bgImage, files }) => {
     }
 }
 
-export const updateBlogStatusAction = ({ id, body }) => {
+export const updateBlogStatusAction = ({ id, body, bgImage, files }) => {
     return async dispatch => {
         try {
             dispatch({ type: blogConstants.UPDATE_BLOG_REQUEST });
@@ -107,6 +107,39 @@ export const updateBlogStatusAction = ({ id, body }) => {
                     'Authorization': `Bearer ${token}`,
                 },
             });
+
+            // 2. upload bgImage (check if existed bgImage)
+            if (bgImage.name) {
+                const uploadBgImage = await imageCompression(bgImage, {
+                    maxSizeMB: 0.1,
+                    maxWidthOrHeight: 1920,
+                    useWebWorker: true,
+                })
+
+                const payloadBgImage = new FormData()
+                payloadBgImage.append('bgImage', uploadBgImage)
+
+                await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/blogs/${data._id}/bg-image`, payloadBgImage, {
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
+            }
+            // 3. upload file (check if existed file)
+            if (files) {
+                const payloadFile = new FormData()
+                files.map((file) => {
+                    payloadFile.append('files', file)
+                })
+
+                await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/blogs/${data._id}/files`, payloadFile, {
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
+            }
 
             dispatch({
                 type: blogConstants.UPDATE_BLOG_SUCCESS,
