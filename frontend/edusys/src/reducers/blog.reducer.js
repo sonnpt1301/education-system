@@ -75,6 +75,26 @@ export default (state = initState, action) => {
                 loadingUpdate: false
             }
             break;
+        case blogConstants.DELETE_BLOG_REQUEST:
+            state = {
+                ...state,
+                loadingDelete: true
+            }
+            break;
+        case blogConstants.DELETE_BLOG_SUCCESS:
+            state = {
+                ...state,
+                loadingDelete: false,
+                errorDelete: null
+            }
+            break;
+        case blogConstants.DELETE_BLOG_FAILURE:
+            state = {
+                ...state,
+                errorDelete: action.payload,
+                loadingDelete: false
+            }
+            break;
     }
     return state
 }
