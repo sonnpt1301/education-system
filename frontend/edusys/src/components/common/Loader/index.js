@@ -1,17 +1,18 @@
-import React from 'react';
-import { Spinner } from 'react-bootstrap';
-const Loader = ({ message }) => {
+import React from 'react'
+import { BarLoader, PropagateLoader } from "react-spinners"
+
+export const Loader = () => {
     return (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Spinner
-                animation="border"
-                role="status"
-                variant="primary"
-            >
-                <span className="sr-only">{message || 'Loading...99%'}</span>
-            </Spinner>
+            <BarLoader color='#28a745' loading={true} width='100%' />
         </div>
     );
 };
 
-export default Loader;
+
+
+
+
+
+
+

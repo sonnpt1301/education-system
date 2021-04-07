@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink, Redirect } from 'react-router-dom'
 import { loginAction } from '../../actions'
-import Loader from '../../components/common/Loader'
+import { Loader } from '../../components/common/Loader'
 import Message from '../../components/common/Message'
 
 const Login = () => {

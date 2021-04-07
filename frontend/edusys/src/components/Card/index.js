@@ -1,9 +1,13 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 import Badge from '../../components/Badge'
 import './style.css'
 
 const Card = ({ title, description, avatar, createdBy, children, status, state }) => {
+
+    const { user } = useSelector(state => state.auth)
+
     return (
         <div class="card">
             <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="Card image cap" />
@@ -24,16 +28,19 @@ const Card = ({ title, description, avatar, createdBy, children, status, state }
                         <div class="group-user">
                             <img src="images/group-profile-users.svg" class="user-icon" alt="user avatar" /> <span class="count-user">35</span>
                         </div>
-                        <NavLink to={{
-                            pathname: `course-detail/${state}`,
-                            state: { _id: state}
-                        }}
-                            className="waves-effect">
-                            <div style={{ cursor: 'pointer' }}>
-                                <img src="images/unnamed-removebg-preview.png" class="door-icon" alt="user avatar" />
-                            </div>
-                        </NavLink>
-
+                        {
+                            user.profile.role !== 'tutors' && (
+                                <NavLink to={{
+                                    pathname: `course-detail/${state}`,
+                                    state: { _id: state }
+                                }}
+                                    className="waves-effect">
+                                    <div style={{ cursor: 'pointer' }}>
+                                        <img src="images/unnamed-removebg-preview.png" class="door-icon" alt="user avatar" />
+                                    </div>
+                                </NavLink>
+                            )
+                        }
                     </div>
                 </div>
             </div>

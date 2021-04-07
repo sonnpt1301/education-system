@@ -153,3 +153,27 @@ export const updateBlogStatusAction = ({ id, body, bgImage, files }) => {
         }
     }
 }
+
+export const deleteBlogAction = ({ blogId }) => {
+    return async dispatch => {
+        try {
+            dispatch({ type: blogConstants.DELETE_BLOG_REQUEST })
+            const token = getToken();
+            const { data: { data } } = await axios.delete(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/blogs/${blogId}`, {
+                headers: {
+                    'Content-type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+            dispatch({
+                type: blogConstants.DELETE_BLOG_SUCCESS,
+                payload: data
+            })
+        } catch (error) {
+            dispatch({
+                type: blogConstants.DELETE_BLOG_FAILURE,
+                payload: error.response?.data?.message || error.message,
+            })
+        }
+    }
+}

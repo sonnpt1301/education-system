@@ -9,7 +9,7 @@ import CardCategory from '../../components/CardCategory'
 import InfoTutor from '../../components/InfoTutor'
 import Layout from '../../components/Layout'
 import { AWS_FOLDER } from '../../config'
-import Loader from '../../components/common/Loader'
+import { Loader } from '../../components/common/Loader'
 import './style.css'
 const Home = () => {
     const dispatch = useDispatch()

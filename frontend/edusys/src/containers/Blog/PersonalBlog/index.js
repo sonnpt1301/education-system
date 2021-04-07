@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getListBLogAction, createBlogAction, updateBlogStatusAction } from '../../../actions'
+import { getListBLogAction, updateBlogStatusAction, deleteBlogAction } from '../../../actions'
 import moment from 'moment'
 import { AWS_FOLDER } from '../../../config'
-import Loader from '../../../components/common/Loader'
+import { Loader } from '../../../components/common/Loader'
 import Button from '../../../components/Button'
 import Modal from '../../../components/common/Modal'
 import Input from '../../../components/common/Input'
@@ -15,7 +15,7 @@ const PersonalBlog = ({ courseId }) => {
 
     const dispatch = useDispatch()
     const { user } = useSelector(state => state.auth)
-    const { loading, blogList, loadingUpdate, errorUpdate } = useSelector(state => state.blog)
+    const { loading, blogList, loadingUpdate, errorUpdate, loadingDelete, errorDelete } = useSelector(state => state.blog)
     const [blogId, setBlogId] = useState('')
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
@@ -24,6 +24,7 @@ const PersonalBlog = ({ courseId }) => {
     const [previewBgImage, setPreviewBgImage] = useState(null)
     const [files, setFiles] = useState([])
     const [showUpdateModal, setShowUpdateModal] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [message, setMessage] = useState('')
 
     const handleUploadBackgroundImage = (e) => {
@@ -48,7 +49,12 @@ const PersonalBlog = ({ courseId }) => {
         setBgImage(`${AWS_FOLDER.IMAGE}${blog.bgImage}`)
         setFiles(blog.files)
         setShowUpdateModal(true)
-        console.log(files)
+    }
+
+    const showDeleteBlogModal = (id) => {
+        const blog = blogList?.blogs?.find(blog => blog._id === id)
+        setBlogId(blog._id)
+        setShowDeleteModal(true)
     }
 
     const updateBlogHandler = () => {
@@ -63,6 +69,12 @@ const PersonalBlog = ({ courseId }) => {
         }))
     }
 
+    const deleteBlogHandler = () => {
+        dispatch(deleteBlogAction({
+            blogId: blogId
+        }))
+    }
+
     const resetField = () => {
         setTitle('')
         setContent('')
@@ -71,6 +83,7 @@ const PersonalBlog = ({ courseId }) => {
         setPreviewBgImage(null)
         setMessage('')
         setShowUpdateModal(false)
+        setShowDeleteModal(false)
     }
 
     useEffect(() => {
@@ -84,13 +97,23 @@ const PersonalBlog = ({ courseId }) => {
     }, [loadingUpdate, errorUpdate]);
 
     useEffect(() => {
+        if (!loadingDelete && !errorDelete) {
+            setMessage('Delete blog successful');
+            setTimeout(() => {
+                resetField();
+            }, 1000);
+        }
+
+    }, [loadingDelete, errorDelete]);
+
+    useEffect(() => {
         if (courseId) {
             dispatch(getListBLogAction({
                 createdBy: user._id,
                 course: courseId,
             }))
         }
-    }, [loadingUpdate])
+    }, [loadingUpdate, loadingDelete])
 
     return (
         <>
@@ -100,6 +123,7 @@ const PersonalBlog = ({ courseId }) => {
                 show={showUpdateModal}
                 handleClose={() => setShowUpdateModal(false)}
                 onHide={() => setShowUpdateModal(false)}
+                size='lg'
             >
                 {loadingUpdate && <Loader />}
                 {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
@@ -179,6 +203,31 @@ const PersonalBlog = ({ courseId }) => {
             </Modal>
 
 
+            {/* Delete blog modal */}
+            <Modal
+                modalTitle={'Are you sure to delete your blog?'}
+                show={showDeleteModal}
+                handleClose={() => setShowDeleteModal(false)}
+                onHide={() => setShowDeleteModal(false)}
+            >
+                {loadingDelete && <Loader />}
+                {errorDelete && <Message variant="danger">{errorDelete}</Message>}
+                {message && <Message variant="success">{message}</Message>}
+                <Button
+                    status='light'
+                    onClick={() => setShowDeleteModal(false)}
+                >
+                    Cancel
+                </Button>
+                <Button
+                    status='danger'
+                    onClick={deleteBlogHandler}
+                >
+                    Delete
+                </Button>
+            </Modal>
+
+
             {loading && <Loader />}
 
             {
@@ -197,7 +246,7 @@ const PersonalBlog = ({ courseId }) => {
                                         </a>
                                         <div className="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style={{ position: 'absolute', willChange: 'transform', top: '0px', left: '0px', transform: 'translate3d(-177px, 21px, 0px)' }}>
                                             <div className="dropdown-item" onClick={() => showEditBlogModal(blog._id)}>Edit</div>
-                                            <div className="dropdown-item">Delete</div>
+                                            <div className="dropdown-item" onClick={() => showDeleteBlogModal(blog._id)}>Delete</div>
                                         </div>
                                     </div>
                                 </div>

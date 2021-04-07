@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { createNewPasswordAction, resetPasswordAction } from '../../actions/auth.action'
-import Loader from '../../components/common/Loader'
+import { Loader } from '../../components/common/Loader'
 import Message from '../../components/common/Message'
 const ResetPassword = ({ location }) => {
     const dispatch = useDispatch()

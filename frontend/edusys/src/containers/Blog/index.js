@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getListBLogAction, createBlogAction } from '../../actions/blog.action'
 import moment from 'moment'
 import { AWS_FOLDER } from '../../config'
-import Loader from '../../components/common/Loader'
 import Button from '../../components/Button'
 import Modal from '../../components/common/Modal'
 import Input from '../../components/common/Input'
@@ -12,6 +11,7 @@ import { Figure } from 'react-bootstrap'
 import { FileIcon, defaultStyles } from 'react-file-icon'
 import PersonalBlog from './PersonalBlog'
 import WaitingBlog from './WaitingBlog'
+import { Loader } from '../../components/common/Loader'
 
 
 const Blog = ({ _id }) => {
@@ -37,11 +37,15 @@ const Blog = ({ _id }) => {
     const [filter, setFilter] = useState('approve')
     const [showWaitingBlogModal, setShowWaitingBlogModal] = useState(false)
 
-    const handleCloseCreateModal = () => setShowCreateModal(false)
 
     const handleUploadBackgroundImage = (e) => {
         setBgImage(e.target.files[0])
         setPreviewBgImage(URL.createObjectURL(e.target.files[0]))
+    }
+
+    const handleCloseCreateModal = () => {
+        setShowCreateModal(false)
+        setMessage('')
     }
 
     const handleUploadAttachFiles = (e) => {
@@ -120,13 +124,13 @@ const Blog = ({ _id }) => {
                     <div className="tab-content">
                         {tab === 0 && (
                             <>
-
                                 {/* Create blog modal */}
                                 <Modal
                                     modalTitle={'New blog'}
                                     show={showCreateModal}
                                     handleClose={handleCloseCreateModal}
                                     onHide={handleCloseCreateModal}
+                                    size='lg'
                                 >
                                     {loadingCreate && <Loader />}
                                     {errorCreate && <Message variant="danger">{errorCreate}</Message>}
@@ -218,7 +222,6 @@ const Blog = ({ _id }) => {
                                         courseId={_id}
                                     />
                                 }
-
 
 
                                 {loading && <Loader />}

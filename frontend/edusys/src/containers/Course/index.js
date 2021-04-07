@@ -4,7 +4,7 @@ import { getListCategoryAction, getListCourseAction } from '../../actions'
 import Layout from '../../components/Layout'
 import Input from '../../components/common/Input'
 import Card from '../../components/Card'
-import Loader from '../../components/common/Loader'
+import { Loader } from '../../components/common/Loader'
 import { AWS_FOLDER } from '../../config'
 import ReactPaginate from 'react-paginate'
 import Badge from '../../components/Badge'
@@ -77,7 +77,7 @@ const Course = () => {
                     </div>
                     <div class="row">
                         {courseList?.data && courseList.data.map(course => (
-                            <div class="col-12 col-lg-4">
+                            <div class="col-12 col-lg-3">
                                 <Card
                                     title={course.title}
                                     description={course.description}

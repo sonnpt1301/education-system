@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getCourseDetailAction } from '../../../actions'
 import Layout from '../../../components/Layout'
 import { AWS_FOLDER } from '../../../config'
-import Loader from '../../../components/common/Loader'
+import { Loader } from '../../../components/common/Loader'
 import Blog from '../../Blog'
 import Activity from '../../Activity'
 
