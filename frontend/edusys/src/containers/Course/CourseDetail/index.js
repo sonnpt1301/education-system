@@ -7,15 +7,21 @@ import { AWS_FOLDER } from '../../../config'
 import { Loader } from '../../../components/common/Loader'
 import Blog from '../../Blog'
 import Activity from '../../Activity'
+import { useHistory } from 'react-router'
 
 const CourseDetail = ({ match }) => {
 
     const dispatch = useDispatch()
-    const { courseDetail, loadingCourseDetail } = useSelector(state => state.course)
+    const { courseDetail, loadingCourseDetail, error } = useSelector(state => state.course)
     const [currentCourse, setCurrentCourse] = useState({})
     const [tab, setTab] = useState(0)
+    const history = useHistory()
 
-
+    useEffect(() => {
+        if(error){
+            history.push(`/course?joinCourse=true&&courseId=${match.params.id}`)
+        }
+    }, [error])
 
     useEffect(() => {
         if (!courseDetail?.title || match.params.id !== courseDetail._id) {

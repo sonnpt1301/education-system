@@ -12,7 +12,12 @@ const initState = {
     loadingUpdate: false,
     errorCreate: null,
     errorUpdate: null,
-    errorDelete: null
+    errorDelete: null,
+    loadingSendRequest: false,
+    errorSendRequest: null,
+    loadingJoinCourse: false,
+    errorJoinCourse: null,
+    isJoin: {}
 }
 export default (state = initState, action) => {
     // eslint-disable-next-line default-case
@@ -27,7 +32,8 @@ export default (state = initState, action) => {
             state = {
                 ...state,
                 loadingCourseDetail: false,
-                courseDetail: action.payload
+                courseDetail: action.payload,
+                isJoin: false
             }
             break;
         case courseConstants.GET_COURSE_DETAIL_FAILURE:
@@ -115,6 +121,48 @@ export default (state = initState, action) => {
                 loadingDelete: false
             }
             break;
+        case courseConstants.SEND_REQUEST_TO_JOIN_COURSE_REQUEST:
+            state = {
+                ...state,
+                loadingSendRequest: true
+            }
+            break;
+        case courseConstants.SEND_REQUEST_TO_JOIN_COURSE_SUCCESS:
+            state = {
+                ...state,
+                loadingSendRequest: false
+            }
+            break;
+        case courseConstants.SEND_REQUEST_TO_JOIN_COURSE_FAILURE:
+            state = {
+                ...state,
+                errorSendRequest: action.payload,
+                loadingSendRequest: false
+            }
+            break;
+        case courseConstants.JOIN_COURSE_REQUEST:
+            state = {
+                ...state,
+                loadingJoinCourse: true
+            }
+            break;
+        case courseConstants.JOIN_COURSE_SUCCESS:
+            state = {
+                ...state,
+                loadingJoinCourse: false,
+                isJoin: action.payload,
+                errorJoinCourse: null
+            }
+            break;
+        case courseConstants.JOIN_COURSE_FAILURE:
+            state = {
+                ...state,
+                errorJoinCourse: action.payload,
+                loadingJoinCourse: false
+            }
+            break;
+
+
     }
     return state
 }

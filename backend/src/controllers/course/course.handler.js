@@ -2,7 +2,7 @@ import { getCourseService, createCourseService, deleteCourseService, listCourseS
 import { queryBuilder } from './course.validator.js'
 
 export const getCourse = async (req, res) => {
-    const { statusCode, message, data } = await getCourseService(req.params.id)
+    const { statusCode, message, data } = await getCourseService(req.params.id, req.user)
 
     return res.status(statusCode).send({ statusCode, message, data })
 }

@@ -7,6 +7,7 @@ import categoryRoute from './category.route.js'
 import courseRoute from './course.route.js'
 import blogRoute from './blog.route.js'
 import commentRoute from './comment.route.js'
+import userCourseRoute from './user-course.route.js'
 
 const router = express.Router();
 export default (app) => {
@@ -31,4 +32,7 @@ export default (app) => {
 
     // routing to /comments
     commentRoute(router)
+
+    //routing to /user-courses
+    userCourseRoute(router)
 };

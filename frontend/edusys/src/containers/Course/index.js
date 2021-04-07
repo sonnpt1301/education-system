@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getListCategoryAction, getListCourseAction } from '../../actions'
+import { getCourseDetailAction, getListCategoryAction, getListCourseAction, joinCourseAction, sendRequestToJoinCourseAction } from '../../actions'
 import Layout from '../../components/Layout'
 import Input from '../../components/common/Input'
 import Card from '../../components/Card'
@@ -8,10 +8,17 @@ import { Loader } from '../../components/common/Loader'
 import { AWS_FOLDER } from '../../config'
 import ReactPaginate from 'react-paginate'
 import Badge from '../../components/Badge'
+import Modal from '../../components/common/Modal'
+import Button from '../../components/Button'
+import qs from 'query-string'
+import { Redirect, useHistory } from 'react-router'
+import Message from '../../components/common/Message'
+import { NavLink } from 'react-router-dom'
 
-const Course = () => {
+const Course = ({ location }) => {
     const dispatch = useDispatch()
-    const { courseList, loading } = useSelector(state => state.course)
+    const history = useHistory()
+    const { courseList, loading, error, loadingSendRequest, loadingJoinCourse, isJoin, errorJoinCourse } = useSelector(state => state.course)
     const { categoryList } = useSelector(state => state.category)
 
     const [categoryId, setCategoryId] = useState('')
@@ -20,12 +27,64 @@ const Course = () => {
     const [skip, setSkip] = useState(0)
     const [total, setTotal] = useState(0)
     const [filter, setFilter] = useState(['on process', 'accomplish'])
+    const [message, setMessage] = useState('')
+    const [joinCourseModal, setJoinCourseModal] = useState(false)
+    const [secretKey, setSecretKey] = useState('')
+    const [successMessage, setSuccessMessage] = useState('')
 
     const handlePageChange = (page) => {
         let selected = page.selected;
         let skip = Math.ceil(selected * limit);
         setSkip(skip);
     };
+
+    const handleCloseJoinCourseModal = () => {
+        setJoinCourseModal(false)
+        history.push('/course')
+    }
+
+    const joinCourseHandler = () => {
+        const query = qs.parse(location.search)
+        dispatch(joinCourseAction({
+            body: {
+                courseId: query.courseId,
+                secretKey: secretKey
+            }
+        }))
+    }
+
+    useEffect(() => {
+        if (!loadingJoinCourse && !errorJoinCourse && isJoin?.isJoined === true) {
+            setTimeout(() => {
+                setMessage('')
+                setSuccessMessage('Join course successful. Please close this modal and refresh this page to join your course!')
+            }, 1000);
+        }
+    }, [loadingJoinCourse, errorJoinCourse])
+
+    useEffect(() => {
+        if (error && loadingSendRequest === false) {
+            setTimeout(() => {
+                setMessage('The secret key has been sending to your email. Please check your email!')
+            }, 4000);
+        }
+    }, [error, loadingSendRequest])
+
+    useEffect(() => {
+        if (location.search) {
+            const query = qs.parse(location.search)
+            if (query.joinCourse === 'true') {
+                setJoinCourseModal(true)
+                dispatch(sendRequestToJoinCourseAction({
+                    body: {
+                        courseId: query.courseId
+                    }
+                }))
+            }
+        }
+    }, [location])
+
+
     useEffect(() => {
         courseList && setTotal(courseList?.total || 0);
     }, [courseList]);
@@ -40,10 +99,55 @@ const Course = () => {
             limit,
             category: categoryId
         }))
-    }, [categoryId, filter])
+    }, [categoryId, filter, loadingJoinCourse])
+
+
 
     return (
         <Layout>
+
+
+            <Modal
+                modalTitle={'Join course'}
+                show={joinCourseModal}
+                handleClose={handleCloseJoinCourseModal}
+                onHide={handleCloseJoinCourseModal}
+            >
+                {successMessage && <Message variant='warning'>{successMessage}</Message>}
+                {message && <Message>{message}</Message>}
+                {errorJoinCourse && <Message variant='danger'>{errorJoinCourse}</Message>}
+                {loadingSendRequest && <Loader />}
+                {loadingJoinCourse && <Loader />}
+                {
+                    !isJoin?.isJoined && (
+                        <Input
+                            placeholder='Enter secret key here...'
+                            value={secretKey}
+                            onChange={(e) => setSecretKey(e.target.value)}
+                        />
+                    )
+                }
+                {
+                    isJoin?.isJoined === true ? (
+                        <Button
+                            status='success'
+                            icon='fa fa-window-close'
+                            long
+                            onClick={handleCloseJoinCourseModal}
+                        >
+                            Close
+                        </Button>
+                    ) : <Button
+                        status='success'
+                        icon='zmdi zmdi-plus-circle'
+                        long
+                        onClick={joinCourseHandler}
+                    >
+                        Join
+                        </Button>
+                }
+            </Modal>
+
             {loading && <Loader />}
             <div class="content-wrapper">
                 <div class="container-fluid">
@@ -86,6 +190,7 @@ const Course = () => {
                                     status={(course.status === 'on process' && 'success') || (course.status === 'accomplish' && 'info')}
                                     children={(course.status === 'on process' && 'On process') || (course.status === 'accomplish' && 'Accomplish')}
                                     state={course._id}
+                                    totalUser={course.totalUser}
                                 />
                             </div>
                         ))}

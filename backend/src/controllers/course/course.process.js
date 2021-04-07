@@ -4,12 +4,12 @@ import { mailer } from '../../common/mailer.js'
 import { Category } from '../../models/category.model.js'
 import { Course } from '../../models/course.model.js'
 import { User } from '../../models/user.model.js'
+import { UserCourse } from '../../models/user-course.model.js'
 import { sanitizeUpdateData } from './course.validator.js'
 
-import schedule from 'node-schedule'
 
 
-export const getCourseService = async (courseId) => {
+export const getCourseService = async (courseId, user = {}) => {
     const response = {
         statusCode: 200,
         message: 'Showing course successful',
@@ -17,6 +17,18 @@ export const getCourseService = async (courseId) => {
     };
 
     try {
+        const checkUser = await UserCourse.findOne({
+            course: courseId,
+            user: user._id,
+        })
+        if (!checkUser && user.profile.role === 'student') {
+            return {
+                statusCode: 404,
+                message: `You haven't join this course`,
+                data: {},
+            }
+        }
+        
         const course = await Course.findOne({
             _id: courseId,
             isDeleted: false,
@@ -59,21 +71,18 @@ export const listCourseService = async (filter = {}, limit, skip) => {
         })
             .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
             .populate({ path: 'category', select: 'name' })
-            .sort({ updatedAt: -1 })
             .limit(limit)
             .skip(skip)
             .lean()
 
-        // const addTotalUser = courses.map(async (course) => {
-        //     const totalUser = await UserCourse.countDocuments({ courseId: course._id })
-
-        //     return { 
-        //         ...course,
-        //         totalUser,
-        //     }
-        // })
-
-        // await Promise.all(addTotalUser)
+        const addTotalUser = courses.map(async (course) => {
+            const totalUser = await UserCourse.countDocuments({ course: course._id })
+            return {
+                ...course,
+                totalUser,
+            }
+        })
+        const test = await Promise.all(addTotalUser)
 
         const statisticCourse = await Course.aggregate([
             { $match: { ...filter } },
@@ -92,7 +101,7 @@ export const listCourseService = async (filter = {}, limit, skip) => {
             limit,
             skip,
             totalPage: Math.ceil(total / limit),
-            data: courses,
+            data: test,
             statisticCourse
         }
     } catch (err) {

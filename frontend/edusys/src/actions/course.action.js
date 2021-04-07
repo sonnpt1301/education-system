@@ -109,3 +109,53 @@ export const updateCourseAction = ({ id, body }) => {
 //     }
 // }
 
+export const sendRequestToJoinCourseAction = ({ body }) => {
+    return async dispatch => {
+        try {
+            const token = getToken()
+            console.log(body)
+            dispatch({ type: courseConstants.SEND_REQUEST_TO_JOIN_COURSE_REQUEST })
+            const { data: { data } } = await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/user-course/send-request`, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            console.log(data)
+            dispatch({
+                type: courseConstants.SEND_REQUEST_TO_JOIN_COURSE_SUCCESS,
+                payload: data
+            })
+        } catch (error) {
+            dispatch({
+                type: courseConstants.SEND_REQUEST_TO_JOIN_COURSE_FAILURE,
+                payload: error.response?.data?.message || error.message,
+            })
+        }
+    }
+}
+
+export const joinCourseAction = ({ body }) => {
+    return async dispatch => {
+        try {
+            const token = getToken()
+            dispatch({ type: courseConstants.JOIN_COURSE_REQUEST })
+            const { data: { data } } = await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/user-course/join-course`, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            console.log(data)
+            dispatch({
+                type: courseConstants.JOIN_COURSE_SUCCESS,
+                payload: data
+            })
+        } catch (error) {
+            dispatch({
+                type: courseConstants.JOIN_COURSE_FAILURE,
+                payload: error.response?.data?.message || error.message,
+            })
+        }
+    }
+}
