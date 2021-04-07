@@ -25,7 +25,9 @@ const Home = () => {
             role: 'tutors',
             limit
         }))
-        dispatch(getListCategoryAction())
+        dispatch(getListCategoryAction({
+            limit
+        }))
         dispatch(getListCourseAction({
             limit
         }))
@@ -84,6 +86,7 @@ const Home = () => {
                                     avatar={`${AWS_FOLDER.IMAGE}${course.createdBy.profile.avatar}`}
                                     createdBy={course.createdBy.profile.firstName + ' ' + course.createdBy.profile.lastName}
                                     state={course._id}
+                                    totalUser={course.totalUser}
                                 />
                             </div>
                         ))}

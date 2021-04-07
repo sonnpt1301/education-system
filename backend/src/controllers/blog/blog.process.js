@@ -66,7 +66,6 @@ export const listBlogService = async (filter = {}, limit, skip) => {
         })
             .populate({ path: 'course', select: 'title' })
             .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
-            .sort({ updatedAt: -1 })
             .limit(limit)
             .skip(skip)
             .lean();
@@ -147,7 +146,6 @@ export const updateBlogService = async (blogId, data) => {
 
     try {
         const updateData = sanitizeUpdateData(data);
-        console.log(updateData)
         if (updateData.course) {
             // check exist course
             const course = await Course.findOne({

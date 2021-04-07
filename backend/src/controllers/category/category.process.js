@@ -1,6 +1,6 @@
 import { Category } from '../../models/category.model.js'
 
-export const getListCategoryService = async (filter = {}) => {
+export const getListCategoryService = async (filter = {}, limit, skip) => {
     const response = {
         statusCode: 200,
         message: 'Showing list category',
@@ -11,11 +11,15 @@ export const getListCategoryService = async (filter = {}) => {
             ...filter,
             isDeleted: false
         })
-        const categories = await Category.find({
+        const category = await Category.find({
             ...filter, isDeleted: false
         })
-        const category = await Category.populate(categories, { path: 'createdBy', select: 'email profile' })
-        response.data = { total, category }
+            .populate({ path: 'createdBy', select: 'email profile' })
+            .limit(limit)
+            .skip(skip)
+            .lean()
+
+        response.data = { total, category, limit, skip }
     } catch (err) {
         response.statusCode = 500;
         response.message = err.message;
