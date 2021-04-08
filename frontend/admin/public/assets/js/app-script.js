@@ -21,7 +21,7 @@ $(function () {
 
     // === sidebar menu activation js
 
-    $(window).on('click', function () {
+    $(document).on('click', function () {
         for (var i = window.location, o = $(".sidebar-menu a").filter(function () {
             return this.href == i;
         }).addClass("active").parent().addClass("active"); ;) {
@@ -31,7 +31,7 @@ $(function () {
     }),
 
         /* sticky menu */
-        $(window).on('load', function () {
+        $(document).on('load', function () {
             $(window).on("scroll", function () {
                 if ($(this).scrollTop() > 60) {
                     $('.horizontal-menu').addClass('sticky-menu');
@@ -45,47 +45,11 @@ $(function () {
 
     /* Back To Top */
 
-    $(document).ready(function () {
-        $(window).on("scroll", function () {
-            if ($(this).scrollTop() > 300) {
-                $('.back-to-top').fadeIn();
-            } else {
-                $('.back-to-top').fadeOut();
-            }
-        });
-
-        $('.back-to-top').on("click", function () {
-            $("html, body").animate({ scrollTop: 0 }, 600);
-            return false;
-        });
-    });
-
-
     // page loader
-
-    $(window).on('load', function () {
+    $(document).on('load', function () {
 
         $('#pageloader-overlay').fadeOut(1000);
 
     })
-
-
-
-    $(function () {
-        $('[data-toggle="popover"]').popover()
-    })
-
-
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-
-
-
-
-
-
-
-
 
 });

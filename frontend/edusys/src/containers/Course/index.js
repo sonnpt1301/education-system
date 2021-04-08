@@ -21,7 +21,7 @@ const Course = ({ location }) => {
     const { courseList, loading, error, loadingSendRequest, loadingJoinCourse, isJoin, errorJoinCourse } = useSelector(state => state.course)
     const { categoryList } = useSelector(state => state.category)
 
-    const [categoryId, setCategoryId] = useState('')
+    // const [categoryId, setCategoryId] = useState('')
 
     const [limit, setLimit] = useState(10)
     const [skip, setSkip] = useState(0)
@@ -37,6 +37,7 @@ const Course = ({ location }) => {
         let skip = Math.ceil(selected * limit);
         setSkip(skip);
     };
+
 
     const handleCloseJoinCourseModal = () => {
         setJoinCourseModal(false)
@@ -94,12 +95,14 @@ const Course = ({ location }) => {
     }, [])
 
     useEffect(() => {
-        dispatch(getListCourseAction({
-            status: filter,
-            limit,
-            category: categoryId
-        }))
-    }, [categoryId, filter, loadingJoinCourse])
+        if (location.state.categoryId) {
+            dispatch(getListCourseAction({
+                status: filter,
+                limit,
+                category: location.state.categoryId
+            }))
+        }
+    }, [location, filter, loadingJoinCourse])
 
 
 
@@ -155,7 +158,7 @@ const Course = ({ location }) => {
                         <div class="col-2">
                             <h4>Courses</h4>
                         </div>
-                        <div class="col-2">
+                        {/* <div class="col-2">
                             <Input
                                 type="select"
                                 label='Choose category'
@@ -164,7 +167,7 @@ const Course = ({ location }) => {
                                 value={categoryId}
                                 onChange={(e) => setCategoryId(e.target.value)}
                             />
-                        </div>
+                        </div> */}
                         <div class="col-2">
                             <label>
                                 Choose courses
@@ -180,20 +183,22 @@ const Course = ({ location }) => {
                         </div>
                     </div>
                     <div class="row">
-                        {courseList?.data && courseList.data.map(course => (
-                            <div class="col-12 col-lg-3">
-                                <Card
-                                    title={course.title}
-                                    description={course.description}
-                                    avatar={`${AWS_FOLDER.IMAGE}${course.createdBy.profile.avatar}`}
-                                    createdBy={course.createdBy.profile.firstName + ' ' + course.createdBy.profile.lastName}
-                                    status={(course.status === 'on process' && 'success') || (course.status === 'accomplish' && 'info')}
-                                    children={(course.status === 'on process' && 'On process') || (course.status === 'accomplish' && 'Accomplish')}
-                                    state={course._id}
-                                    totalUser={course.totalUser}
-                                />
-                            </div>
-                        ))}
+                        {
+                            courseList?.data ? courseList.data.map(course => (
+                                <div class="col-12 col-lg-4">
+                                    <Card
+                                        title={course.title}
+                                        description={course.description}
+                                        avatar={`${AWS_FOLDER.IMAGE}${course.createdBy.profile.avatar}`}
+                                        createdBy={course.createdBy.profile.firstName + ' ' + course.createdBy.profile.lastName}
+                                        status={(course.status === 'on process' && 'success') || (course.status === 'accomplish' && 'info')}
+                                        children={(course.status === 'on process' && 'On process') || (course.status === 'accomplish' && 'Accomplish')}
+                                        state={course._id}
+                                        totalUser={course.totalUser}
+                                    />
+                                </div>
+                            )) : <i>No course here</i>
+                        }
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-md-5">

@@ -20,7 +20,7 @@ const Card = ({ title, description, avatar, createdBy, children, status, state, 
                     <h4 class="card-title">{title}
                         <Badge status={status}>{children}</Badge>
                     </h4>
-                    <h6>{description}</h6>
+                    <h6 className='card-description-limit'>{description}</h6>
                     <hr />
                     <div class="user-details">
                         <div class="media align-items-center">

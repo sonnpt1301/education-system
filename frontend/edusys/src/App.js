@@ -11,6 +11,7 @@ import Home from './containers/Home';
 import Course from './containers/Course';
 import CourseDetail from './containers/Course/CourseDetail';
 import { logoutAction } from './actions';
+import About from './containers/About';
 
 
 
@@ -24,9 +25,10 @@ function App() {
         <Route exact path="/login" component={Login} />
         <Route exact path="/reset-password" component={ResetPassword} />
 
-        <PrivateRoute exact path="/" component={Home} />
-        <PrivateRoute exact path="/course" component={Course} />
+        <Route exact path="/" component={Home} />
+        <Route exact path="/course" component={Course} />
         <PrivateRoute exact path="/course-detail/:id" component={CourseDetail} />
+        <Route exact path="/about" component={About} />
         <Route path="*" component={() => "404 NOT FOUND"} />
       </Switch>
     </Router>
