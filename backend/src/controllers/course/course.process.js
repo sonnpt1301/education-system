@@ -6,6 +6,9 @@ import { Course } from '../../models/course.model.js'
 import { User } from '../../models/user.model.js'
 import { UserCourse } from '../../models/user-course.model.js'
 import { sanitizeUpdateData } from './course.validator.js'
+import md5 from 'md5';
+import { downloadAWS, uploadAWS } from '../../common/aws.js';
+import { AWS_FOLDER, EDUSYS_BUCKET } from '../../common/enum.js';
 
 
 
@@ -255,6 +258,39 @@ export const deleteCourseService = async (courseId) => {
         }
 
         response.data = course;
+    } catch (err) {
+        response.statusCode = 500;
+        response.message = err.message;
+    }
+
+    return response;
+};
+
+
+export const uploadCourseBgImgService = async (courseId, file) => {
+    const response = {
+        statusCode: 200,
+        message: 'Upload Course background image successful',
+        data: {},
+    };
+
+    try {
+        const course = await Course.findOne({ _id: courseId, isDeleted: false })
+            .populate({ path: 'category', select: 'name' })
+            .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
+        if (!course) {
+            return {
+                statusCode: 404,
+                message: 'Course not found',
+                data: {},
+            };
+        }
+
+        course.bgImage = `${md5(Date.now())}.${md5(file.buffer)}.${file.originalname.split('.').pop()}`;
+        await uploadAWS(EDUSYS_BUCKET, `${AWS_FOLDER.IMAGE}${course.bgImage}`, file.buffer);
+
+
+        response.data = await course.save();
     } catch (err) {
         response.statusCode = 500;
         response.message = err.message;

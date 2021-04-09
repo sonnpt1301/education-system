@@ -1,37 +1,55 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { getCourseDetailAction, getListCategoryAction, getListCourseAction, joinCourseAction, sendRequestToJoinCourseAction } from '../../actions'
-import Layout from '../../components/Layout'
-import Input from '../../components/common/Input'
-import Card from '../../components/Card'
-import { Loader } from '../../components/common/Loader'
-import { AWS_FOLDER } from '../../config'
-import ReactPaginate from 'react-paginate'
-import Badge from '../../components/Badge'
-import Modal from '../../components/common/Modal'
-import Button from '../../components/Button'
 import qs from 'query-string'
-import { Redirect, useHistory } from 'react-router'
+import React, { useEffect, useState } from 'react'
+import { Col, Figure, Row } from 'react-bootstrap'
+import ReactPaginate from 'react-paginate'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router'
+import { createCourseAction, getListCourseAction, joinCourseAction, sendRequestToJoinCourseAction } from '../../actions'
+import Button from '../../components/Button'
+import Card from '../../components/Card'
+import Input from '../../components/common/Input'
+import { Loader } from '../../components/common/Loader'
 import Message from '../../components/common/Message'
-import { NavLink } from 'react-router-dom'
-import NoData from '../No Data'
+import Modal from '../../components/common/Modal'
+import Layout from '../../components/Layout'
+import { AWS_FOLDER } from '../../config'
+import './style.css'
 
 const Course = ({ location }) => {
     const dispatch = useDispatch()
     const history = useHistory()
-    const { courseList, loading, error, loadingSendRequest, loadingJoinCourse, isJoin, errorJoinCourse } = useSelector(state => state.course)
+    const {
+        courseList,
+        loading,
+        error,
+        loadingSendRequest,
+        loadingJoinCourse,
+        isJoin,
+        errorJoinCourse,
+        loadingCreate,
+        errorCreate
+    } = useSelector(state => state.course)
     const { categoryList } = useSelector(state => state.category)
+    const { user } = useSelector(state => state.auth)
 
-    // const [categoryId, setCategoryId] = useState('')
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [bgImage, setBgImage] = useState({})
+    const [previewBgImage, setPreviewBgImage] = useState(null)
+    const [fromDate, setFromDate] = useState('')
+    const [toDate, setToDate] = useState('')
 
-    const [limit, setLimit] = useState(10)
+    const [limit, setLimit] = useState(6)
     const [skip, setSkip] = useState(0)
     const [total, setTotal] = useState(0)
+
     const [filter, setFilter] = useState(['on process', 'accomplish'])
     const [message, setMessage] = useState('')
     const [joinCourseModal, setJoinCourseModal] = useState(false)
     const [secretKey, setSecretKey] = useState('')
+
     const [successMessage, setSuccessMessage] = useState('')
+    const [createCourseModal, setCreateCourseModal] = useState(false)
 
     const handlePageChange = (page) => {
         let selected = page.selected;
@@ -53,6 +71,46 @@ const Course = ({ location }) => {
                 secretKey: secretKey
             }
         }))
+    }
+
+    const handleUploadBackgroundImage = (e) => {
+        setBgImage(e.target.files[0])
+        setPreviewBgImage(URL.createObjectURL(e.target.files[0]))
+    }
+
+    const createCourseHandler = () => {
+        dispatch(createCourseAction({
+            body: {
+                title,
+                description,
+                bgImage,
+                fromDate,
+                toDate,
+                category: location.state.categoryId
+            },
+            bgImage
+        }))
+    }
+
+    useEffect(() => {
+        if (!loadingCreate && !errorCreate) {
+            setMessage('Create course successful');
+            setTimeout(() => {
+                resetField();
+            }, 1000);
+        }
+
+    }, [loadingCreate, errorCreate]);
+
+    const resetField = () => {
+        setTitle('')
+        setDescription('')
+        setBgImage({})
+        setPreviewBgImage(null)
+        setFromDate('')
+        setToDate('')
+        setCreateCourseModal(false)
+        setMessage('')
     }
 
     useEffect(() => {
@@ -97,17 +155,16 @@ const Course = ({ location }) => {
             dispatch(getListCourseAction({
                 status: filter,
                 limit,
+                skip,
                 category: location.state.categoryId
             }))
         }
-    }, [location, filter, loadingJoinCourse])
+    }, [location, filter, skip, loadingJoinCourse, loadingCreate])
 
 
 
     return (
         <Layout>
-
-
             <Modal
                 modalTitle={'Join course'}
                 show={joinCourseModal}
@@ -122,9 +179,11 @@ const Course = ({ location }) => {
                 {
                     !isJoin?.isJoined && (
                         <Input
+                            label='Secret key'
                             placeholder='Enter secret key here...'
                             value={secretKey}
                             onChange={(e) => setSecretKey(e.target.value)}
+                            important
                         />
                     )
                 }
@@ -149,41 +208,117 @@ const Course = ({ location }) => {
                 }
             </Modal>
 
+
+            <Modal
+                modalTitle={'New course'}
+                show={createCourseModal}
+                handleClose={() => setCreateCourseModal(false)}
+                onHide={() => setCreateCourseModal(false)}
+                size='lg'
+            >
+                {loadingCreate && <Loader />}
+                {errorCreate && <Message variant="danger">{errorCreate}</Message>}
+                {message && <Message variant="success">{message}</Message>}
+                <Input
+                    label='Title'
+                    placeholder='Enter title...'
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    important
+                />
+                <Input
+                    label='Description'
+                    type='textarea'
+                    row={5}
+                    placeholder='Enter description...'
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    important
+                />
+                <Row>
+                    <Col sm={6}>
+                        <Input
+                            label='Start date'
+                            type='date'
+                            value={fromDate}
+                            onChange={(e) => setFromDate(e.target.value)}
+                            important
+                        />
+                    </Col>
+                    <Col sm={6}>
+                        <Input
+                            label='End date'
+                            type='date'
+                            value={toDate}
+                            onChange={(e) => setToDate(e.target.value)}
+                            important
+                        />
+                    </Col>
+                </Row>
+                <Input
+                    type='file'
+                    label='Background Image'
+                    name={bgImage}
+                    onChange={handleUploadBackgroundImage}
+                    accept='image/*'
+                    lang="en"
+                />
+                <Figure>
+                    <Figure.Image
+                        height={180}
+                        alt="171x180"
+                        src={previewBgImage ? previewBgImage : 'https://edusys-project.s3-ap-southeast-1.amazonaws.com/image/course.jpg'}
+                    />
+                    <Figure.Caption style={{ textAlign: 'center' }}>
+                        {previewBgImage ? 'New background image' : 'Default background image'}
+                    </Figure.Caption>
+                </Figure>
+                <Button
+                    status='info'
+                    icon='fa fa-plus-circle'
+                    onClick={createCourseHandler}
+                    long
+                >
+                    Create
+                </Button>
+            </Modal>
+
             {loading && <Loader />}
             <div class="content-wrapper">
                 <div class="container-fluid">
+                    <h4>Courses</h4>
                     <div class="row">
-                        <div class="col-2">
-                            <h4>Courses</h4>
+                        <div class="col-10">
+                            {
+                                user.profile.role === 'tutors' && (
+                                    <Button
+                                        status='info'
+                                        icon='fa fa-plus-circle'
+                                        onClick={() => setCreateCourseModal(true)}
+                                    >
+                                        New Course
+                                    </Button>
+                                )
+                            }
                         </div>
-                        {/* <div class="col-2">
-                            <Input
-                                type="select"
-                                label='Choose category'
-                                options={(Array.isArray(categoryList.category)) && categoryList?.category}
-                                placeholder='All'
-                                value={categoryId}
-                                onChange={(e) => setCategoryId(e.target.value)}
-                            />
-                        </div> */}
-                        <div class="col-2">
+                        <div class="col-2" style={{ paddingLeft: '10px' }}>
+                            Choose courses
                             <label>
-                                Choose courses
+                                <select name="default-datatable_length" aria-controls="default-datatable" class="form-control form-control-sm"
+                                    value={filter} onChange={(e) => setFilter(e.target.value)}
+                                >
+                                    <option key="" value={''}>All</option>
+                                    <option key="on process" value={'on process'}>On process</option>
+                                    <option key="accomplish" value={'accomplish'}>Accomplish</option>
+                                </select>
                             </label>
-                            <select name="default-datatable_length" aria-controls="default-datatable" class="form-control form-control-sm"
-                                value={filter} onChange={(e) => setFilter(e.target.value)}
-                            >
-                                <option key="" value={''}>All</option>
-                                <option key="on process" value={'on process'}>On process</option>
-                                <option key="accomplish" value={'accomplish'}>Accomplish</option>
-                            </select>
 
                         </div>
                     </div>
                     <div class="row">
                         {
                             courseList?.data?.length > 0 ? courseList.data.map(course => (
-                                <div class="col-12 col-lg-4">
+                                <div class="col-12 col-lg-4 card-zoom">
                                     <Card
                                         title={course.title}
                                         description={course.description}
@@ -193,6 +328,7 @@ const Course = ({ location }) => {
                                         children={(course.status === 'on process' && 'On process') || (course.status === 'accomplish' && 'Accomplish')}
                                         state={course._id}
                                         totalUser={course.totalUser}
+                                        courseImg={`${AWS_FOLDER.IMAGE}${course.bgImage}`}
                                     />
                                 </div>
                             )) : <div className='row'>No data</div>

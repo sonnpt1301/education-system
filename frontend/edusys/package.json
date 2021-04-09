@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "aos": "^2.3.4",
     "axios": "^0.21.1",
     "browser-image-compression": "^1.0.14",
     "cra-template": "1.1.2",

@@ -1,35 +1,101 @@
 import React, { useEffect, useState } from 'react'
-import { Col, Row, Tab, Tabs } from 'react-bootstrap'
+import { Col, Figure, Row, Tab, Tabs } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseDetailAction } from '../../../actions'
+import { getCourseDetailAction, updateCourseAction } from '../../../actions'
 import Layout from '../../../components/Layout'
 import { AWS_FOLDER } from '../../../config'
 import { Loader } from '../../../components/common/Loader'
 import Blog from '../../Blog'
 import Activity from '../../Activity'
 import { useHistory } from 'react-router'
+import { formatDate } from '../../../utils'
+import Button from '../../../components/Button'
+import Modal from '../../../components/common/Modal'
+import Input from '../../../components/common/Input'
+import Message from '../../../components/common/Message'
 
 const CourseDetail = ({ match }) => {
 
     const dispatch = useDispatch()
-    const { courseDetail, loadingCourseDetail, error } = useSelector(state => state.course)
+    const {
+        courseDetail,
+        loadingCourseDetail,
+        error,
+        loadingUpdate,
+        errorUpdate
+    } = useSelector(state => state.course)
+    const { user } = useSelector(state => state.auth)
+
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [bgImage, setBgImage] = useState({})
+    const [previewBgImage, setPreviewBgImage] = useState(null)
+    const [fromDate, setFromDate] = useState('')
+    const [toDate, setToDate] = useState('')
+
+    const [updateCourseModal, setUpdateCourseModal] = useState(false)
+
+    const [message, setMessage] = useState('')
+
     const [currentCourse, setCurrentCourse] = useState({})
     const [tab, setTab] = useState(0)
     const history = useHistory()
     const [courseId, setCourseId] = useState(history?.location?.state?._id)
 
+    const handleUploadBackgroundImage = (e) => {
+        setBgImage(e.target.files[0])
+        setPreviewBgImage(URL.createObjectURL(e.target.files[0]))
+    }
+
+    const handleShowUpdateCourseModal = () => {
+        setUpdateCourseModal(true)
+        setTitle(currentCourse.title)
+        setDescription(currentCourse.description)
+        setBgImage(`${AWS_FOLDER.IMAGE}${currentCourse.bgImage}`)
+        setFromDate(currentCourse.fromDate.split('T')[0])
+        setToDate(currentCourse.toDate.split('T')[0])
+    }
+
+    const updateCourseHandler = () => {
+        dispatch(updateCourseAction({
+            id: currentCourse._id,
+            body: {
+                title,
+                description,
+                bgImage,
+                fromDate,
+                toDate,
+            },
+            bgImage
+        }))
+    }
+
     useEffect(() => {
-        if(error && !loadingCourseDetail){
+        if (!loadingUpdate && !errorUpdate) {
+            setMessage('Update course successful');
+            setTimeout(() => {
+                resetField();
+            }, 1000);
+        }
+
+    }, [loadingUpdate, errorUpdate]);
+
+    const resetField = () => {
+        setTitle('')
+        setDescription('')
+        setBgImage({})
+        setPreviewBgImage(null)
+        setFromDate('')
+        setToDate('')
+        setUpdateCourseModal(false)
+        setMessage('')
+    }
+
+    useEffect(() => {
+        if (error && loadingCourseDetail === false) {
             history.push(`/course?joinCourse=true&&courseId=${courseId}`)
         }
     }, [error])
-
-
-    // useEffect(() => {
-    //     if(history?.location?.state?._id){
-    //         setCourseId(history?.location?.state?._id)
-    //     }
-    // }, [history?.location?.state?._id])
 
     useEffect(() => {
         if (!courseDetail?.title || courseId !== courseDetail._id) {
@@ -40,10 +106,85 @@ const CourseDetail = ({ match }) => {
         return () => {
             setTab(0)
         }
-    }, [courseId, courseDetail])
+    }, [courseId, courseDetail, loadingUpdate])
 
     return (
         <Layout>
+
+            <Modal
+                modalTitle={'New course'}
+                show={updateCourseModal}
+                handleClose={() => setUpdateCourseModal(false)}
+                onHide={() => setUpdateCourseModal(false)}
+                size='lg'
+            >
+                {loadingUpdate && <Loader />}
+                {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
+                {message && <Message variant="success">{message}</Message>}
+                <Input
+                    label='Title'
+                    placeholder='Enter title...'
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    important
+                />
+                <Input
+                    label='Description'
+                    type='textarea'
+                    rows={5}
+                    placeholder='Enter description...'
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    important
+                />
+                <Row>
+                    <Col sm={6}>
+                        <Input
+                            label='Start date'
+                            type='date'
+                            value={fromDate}
+                            onChange={(e) => setFromDate(e.target.value)}
+                            important
+                        />
+                    </Col>
+                    <Col sm={6}>
+                        <Input
+                            label='End date'
+                            type='date'
+                            value={toDate}
+                            onChange={(e) => setToDate(e.target.value)}
+                            important
+                        />
+                    </Col>
+                </Row>
+                <Input
+                    type='file'
+                    label='Background Image'
+                    name={bgImage}
+                    onChange={handleUploadBackgroundImage}
+                    accept='image/*'
+                    lang="en"
+                />
+                <Figure>
+                    <Figure.Image
+                        height={180}
+                        alt="171x180"
+                        src={previewBgImage ? previewBgImage : 'https://edusys-project.s3-ap-southeast-1.amazonaws.com/image/course.jpg'}
+                    />
+                    <Figure.Caption style={{ textAlign: 'center' }}>
+                        {previewBgImage ? 'New background image' : 'Default background image'}
+                    </Figure.Caption>
+                </Figure>
+                <Button
+                    status='info'
+                    icon='fa fa-edit'
+                    onClick={updateCourseHandler}
+                    long
+                >
+                    Update
+                </Button>
+            </Modal>
+
             {loadingCourseDetail && <Loader />}
             <div className="content-wrapper">
                 <div className="container-fluid">
@@ -63,7 +204,19 @@ const CourseDetail = ({ match }) => {
                                 <div className="card-body">
 
                                     <blockquote className="blockquote">
-                                        <h3>{currentCourse?.title}</h3>
+                                        <h3>{currentCourse?.title}
+                                            {
+                                                user?._id === currentCourse?.createdBy?._id && (
+                                                    <Button
+                                                        icon='fa fa-edit'
+                                                        status='light'
+                                                        onClick={handleShowUpdateCourseModal}
+                                                        small
+                                                    >
+                                                    </Button>
+                                                )
+                                            }
+                                        </h3>
                                         <div className="user-details">
                                             <div className="media align-items-center">
                                                 <div className="avatar">
@@ -76,7 +229,12 @@ const CourseDetail = ({ match }) => {
                                                         }
                                                     </h6>
                                                 </div>
+
                                             </div>
+                                        </div>
+                                        <div>
+                                            <p style={{ color: 'black', fontSize: '16px', paddingTop: '15px' }}><strong>Duration:</strong> {formatDate(currentCourse?.fromDate) + ' - ' + formatDate(currentCourse?.toDate)}</p>
+                                            <p style={{ color: 'black', fontSize: '16px' }}><strong>Category:</strong> {currentCourse?.category?.name}</p>
                                         </div>
                                     </blockquote>
                                 </div>

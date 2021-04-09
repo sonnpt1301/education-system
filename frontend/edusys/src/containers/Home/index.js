@@ -79,7 +79,7 @@ const Home = () => {
                     <h6 class="text-uppercase textAlign">Newest Course</h6>
                     <div class="row">
                         {courseList?.data && courseList.data.map(course => (
-                            <div class="col-12 col-lg-4">
+                            <div data-aos="fade-up" class="col-12 col-lg-4 card-zoom">
                                 <Card
                                     title={course.title}
                                     description={course.description}
@@ -87,6 +87,7 @@ const Home = () => {
                                     createdBy={course.createdBy.profile.firstName + ' ' + course.createdBy.profile.lastName}
                                     state={course._id}
                                     totalUser={course.totalUser}
+                                    courseImg={`${AWS_FOLDER.IMAGE}${course.bgImage}`}
                                 />
                             </div>
                         ))}

@@ -1,7 +1,3 @@
-.textAlign{
-    text-align: center;
-}
-
 .card-zoom {
     transition: transform .2s;
 }

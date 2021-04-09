@@ -13,4 +13,5 @@ export default (prefix) => {
     router.post('/', validateRole(['tutors']), courseValidator.createCourse, courseController.createCourse)
     router.put('/:id', validateRole(['tutors', 'admin']), courseController.updateCourse)
     router.delete('/:id', validateRole(['tutors', 'admin']), courseController.deleteCourse)
+    router.post('/:id/bg-image', multer({}).single('bgImage'), courseController.uploadCourseBgImg)
 };

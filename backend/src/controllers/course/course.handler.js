@@ -1,4 +1,11 @@
-import { getCourseService, createCourseService, deleteCourseService, listCourseService, updateCourseService } from './course.process.js'
+import {
+    getCourseService,
+    createCourseService,
+    deleteCourseService,
+    listCourseService,
+    updateCourseService,
+    uploadCourseBgImgService
+} from './course.process.js'
 import { queryBuilder } from './course.validator.js'
 
 export const getCourse = async (req, res) => {
@@ -33,6 +40,12 @@ export const deleteCourse = async (req, res) => {
 
     return res.status(statusCode).send({ statusCode, message, data })
 }
+
+export const uploadCourseBgImg = async (req, res) => {
+    const { statusCode, message, data } = await uploadCourseBgImgService(req.params.id, req.file);
+
+    return res.status(statusCode).send({ statusCode, message, data });
+};
 
 
 

@@ -46,6 +46,21 @@ const Input = (props) => {
                 />
             </div>
             break;
+        case 'date':
+            input =
+                <div class="form-group">
+                    <label>{props.label} {props.important && <span style={{ color: 'red' }}>*</span>}</label>
+                    <input
+                        className="form-control"
+                        placeholder={props.placeholder}
+                        type={props.type}
+                        value={props.value}
+                        onChange={props.onChange}
+                        {...props}
+                    />
+                </div>
+
+            break;
         default:
             input = <div class="form-group">
                 <label>{props.label} {props.important && <span style={{ color: 'red' }}>*</span>}</label>

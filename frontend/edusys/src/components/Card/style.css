@@ -17,15 +17,17 @@
     padding-right: 10px
 }
 
-.count-user{
+.count-user {
     font-weight: bold;
     color: black;
 }
 
-.card-description-limit{
+.card-description-limit {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 3; /* number of lines to show */
+    -webkit-line-clamp: 3;
+    /* number of lines to show */
     -webkit-box-orient: vertical;
 }
+

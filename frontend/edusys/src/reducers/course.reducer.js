@@ -25,7 +25,8 @@ export default (state = initState, action) => {
         case courseConstants.GET_COURSE_DETAIL_REQUEST:
             state = {
                 ...state,
-                loadingCourseDetail: true
+                loadingCourseDetail: true,
+                error: null
             }
             break;
         case courseConstants.GET_COURSE_DETAIL_SUCCESS:
@@ -34,7 +35,6 @@ export default (state = initState, action) => {
                 loadingCourseDetail: false,
                 courseDetail: action.payload,
                 isJoin: false,
-                error: null
             }
             break;
         case courseConstants.GET_COURSE_DETAIL_FAILURE:

@@ -3,8 +3,7 @@ import axios from 'axios';
 import { API_CONFIG } from '../config';
 import { courseConstants } from './constants';
 import qs from 'qs';
-
-
+import imageCompression from 'browser-image-compression'
 
 export const getCourseDetailAction = (id) => {
     return async dispatch => {
@@ -59,8 +58,51 @@ export const getListCourseAction = (filter) => {
     }
 }
 
+export const createCourseAction = ({ body, bgImage }) => {
+    return async dispatch => {
+        try {
+            const token = getToken()
+            dispatch({ type: courseConstants.ADD_COURSE_REQUEST })
+            const { data: { data } } = await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/courses/`, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (bgImage.name) {
+                const uploadBgImage = await imageCompression(bgImage, {
+                    maxSizeMB: 0.1,
+                    maxWidthOrHeight: 1920,
+                    useWebWorker: true,
+                })
 
-export const updateCourseAction = ({ id, body }) => {
+                const payloadBgImage = new FormData()
+                payloadBgImage.append('bgImage', uploadBgImage)
+
+                await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/courses/${data._id}/bg-image`, payloadBgImage, {
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
+            }
+            dispatch({
+                type: courseConstants.ADD_COURSE_SUCCESS,
+                payload: data
+            })
+        } catch (error) {
+            dispatch({
+                type: courseConstants.ADD_COURSE_FAILURE,
+                payload: error.response?.data?.message || error.message,
+            })
+        }
+    }
+}
+
+
+
+
+export const updateCourseAction = ({ id, body, bgImage }) => {
     return async dispatch => {
         try {
             const token = getToken()
@@ -71,7 +113,23 @@ export const updateCourseAction = ({ id, body }) => {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            console.log(id, body)
+            if (bgImage?.name) {
+                const uploadBgImage = await imageCompression(bgImage, {
+                    maxSizeMB: 0.1,
+                    maxWidthOrHeight: 1920,
+                    useWebWorker: true,
+                })
+
+                const payloadBgImage = new FormData()
+                payloadBgImage.append('bgImage', uploadBgImage)
+
+                await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/courses/${data._id}/bg-image`, payloadBgImage, {
+                    headers: {
+                        'Content-type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
+            }
             dispatch({
                 type: courseConstants.UPDATE_COURSE_SUCCESS,
                 payload: data

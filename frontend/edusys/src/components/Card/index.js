@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 import Badge from '../../components/Badge'
 import './style.css'
 
-const Card = ({ title, description, avatar, createdBy, children, status, state, totalUser }) => {
+const Card = ({ title, description, avatar, createdBy, children, status, state, totalUser, courseImg }) => {
 
     const { user } = useSelector(state => state.auth)
 
@@ -15,7 +15,7 @@ const Card = ({ title, description, avatar, createdBy, children, status, state, 
         }}
             className="waves-effect">
             <div class="card" style={{ cursor: 'pointer' }}>
-                <img src="https://via.placeholder.com/800x500" class="card-img-top" alt="Card image cap" />
+                <img src={courseImg} style={{ height: '350px'}} class="card-img-top" alt="Card image cap" />
                 <div class="card-body">
                     <h4 class="card-title">{title}
                         <Badge status={status}>{children}</Badge>

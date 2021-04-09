@@ -9,7 +9,6 @@ const HorizontalMenu = () => {
     const dispatch = useDispatch()
     const { categoryList } = useSelector(state => state.category)
     const history = useHistory()
-    console.log(history)
     useEffect(() => {
         dispatch(getListCategoryAction())
     }, [])
@@ -26,7 +25,7 @@ const HorizontalMenu = () => {
                 </button>
             </div>
 
-            <ul id="respMenu" class="horizontal-menu">
+            <ul id="respMenu" class="horizontal-menu" style={{ display: 'flex', justifyContent: 'center' }}>
                 <li>
                     <a href="javascript:;">
                         <i class="fa fa-dashboard" aria-hidden="true"></i>
