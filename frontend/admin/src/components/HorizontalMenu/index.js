@@ -14,7 +14,7 @@ const HorizontalMenu = () => {
                 </button>
             </div>
 
-            <ul id="respMenu" class="horizontal-menu">
+            <ul id="respMenu" class="horizontal-menu" style={{ display: 'flex', justifyContent: 'center' }}>
 
                 <li>
                     <a href="javascript:;">

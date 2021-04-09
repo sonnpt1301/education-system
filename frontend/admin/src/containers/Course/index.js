@@ -10,6 +10,8 @@ import Message from '../../components/common/Message'
 import Modal from '../../components/common/Modal'
 import Layout from '../../components/Layout'
 import { formatDate } from '../../utils'
+import CountUp from 'react-countup'
+import Button from '../../components/Button'
 
 const Course = () => {
     const dispatch = useDispatch()
@@ -25,6 +27,12 @@ const Course = () => {
     const [skip, setSkip] = useState(0)
     const [total, setTotal] = useState(0)
     const [filter, setFilter] = useState('')
+
+    const handlePageChange = (page) => {
+        let selected = page.selected;
+        let skip = Math.ceil(selected * limit);
+        setSkip(skip);
+    };
 
     const approveCourseHandler = (id) => {
         const course = courseList.data.find(c => c._id === id)
@@ -54,6 +62,9 @@ const Course = () => {
         }))
     }, [filter, limit, skip, loadingUpdate])
 
+    useEffect(() => {
+        courseList && setTotal(courseList?.total || 0);
+    }, [courseList]);
 
     return (
         <Layout>
@@ -68,11 +79,11 @@ const Course = () => {
                     <div class="row" >
                         <div class="col-lg-12">
                             <div class="card">
-                                <div class="card-header"><i class="fa fa-book"></i> Total Courses: {courseList.total}
+                                <div class="card-header"><i class="fa fa-book"></i> Total Courses: <CountUp end={courseList.total} />
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        Show 
+                                        Show
                                         <label>
                                             <select name="default-datatable_length" aria-controls="default-datatable" class="form-control form-control-sm"
                                                 value={filter} onChange={(e) => setFilter(e.target.value)}
@@ -83,13 +94,23 @@ const Course = () => {
                                                 <option key="accomplish" value={'accomplish'}>Accomplished</option>
                                             </select>
                                         </label>
-                                            courses 
+                                            courses
+                                            Show
+                                                    <label>
+                                            <select name="default-datatable_length" aria-controls="default-datatable" class="form-control form-control-sm"
+                                                value={limit} onChange={(e) => setLimit(e.target.value)}
+                                            >
+                                                <option key="10" value={10}>10</option>
+                                                <option key="20" value={20}>20</option>
+                                            </select>
+                                        </label>
+                                            courses
+
                                         <table id="default-datatable" class="table table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th>No.</th>
                                                     <th>Title</th>
-                                                    <th>Description</th>
                                                     <th>Category</th>
                                                     <th>Tutors</th>
                                                     <th>Duration</th>
@@ -103,7 +124,6 @@ const Course = () => {
                                                         <tr key={course._id}>
                                                             <td>{index + 1}</td>
                                                             <td>{course.title}</td>
-                                                            <td>{course.description}</td>
                                                             <td>{course.category.name}</td>
                                                             <td>{course.createdBy.profile.firstName + ' ' + course.createdBy.profile.lastName}</td>
                                                             <td>{formatDate(course.fromDate) + ' - ' + formatDate(course.toDate)}</td>
@@ -118,31 +138,43 @@ const Course = () => {
                                                             <td>
                                                                 {
                                                                     course.status === 'reject' && (
-                                                                        <button className="btn btn-success btn-sm waves-effect waves-success m-1"
-                                                                            onClick={(e) => approveCourseHandler(course._id)}>
-                                                                            <i className="fa fa-check-circle"></i>
-                                                                        </button>
+                                                                        <Button
+                                                                            status='success'
+                                                                            icon='fa fa-check-circle'
+                                                                            onClick={(e) => approveCourseHandler(course._id)}
+                                                                            small
+                                                                        >
+                                                                        </Button>
                                                                     )
                                                                 }
                                                                 {
                                                                     course.status === 'on process' && (
-                                                                        <button className="btn btn-danger btn-sm waves-effect waves-danger m-1"
-                                                                            onClick={(e) => rejectCourseHandler(course._id)}>
-                                                                            <i className="fa fa-window-close"></i>
-                                                                        </button>
+                                                                        <Button
+                                                                            status='danger'
+                                                                            icon='fa fa-window-close'
+                                                                            onClick={(e) => rejectCourseHandler(course._id)}
+                                                                            small
+                                                                        >
+                                                                        </Button>
                                                                     )
                                                                 }
                                                                 {
                                                                     course.status === 'pending' && (
                                                                         <>
-                                                                            <button className="btn btn-success btn-sm waves-effect waves-success m-1"
-                                                                                onClick={(e) => approveCourseHandler(course._id)}>
-                                                                                <i className="fa fa-check-circle"></i>
-                                                                            </button>
-                                                                            <button className="btn btn-danger btn-sm waves-effect waves-danger m-1"
-                                                                                onClick={(e) => rejectCourseHandler(course._id)}>
-                                                                                <i className="fa fa-window-close"></i>
-                                                                            </button>
+                                                                            <Button
+                                                                                status='success'
+                                                                                icon='fa fa-check-circle'
+                                                                                onClick={(e) => approveCourseHandler(course._id)}
+                                                                                small
+                                                                            >
+                                                                            </Button>
+                                                                            <Button
+                                                                                status='danger'
+                                                                                icon='fa fa-window-close'
+                                                                                onClick={(e) => rejectCourseHandler(course._id)}
+                                                                                small
+                                                                            >
+                                                                            </Button>
                                                                         </>
                                                                     )
                                                                 }
@@ -155,6 +187,35 @@ const Course = () => {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-5">
+                            <div class="dataTables_info" id="default-datatable_info" role="status" aria-live="polite">
+                                Showing {limit} of {total} courses
+                    </div>
+                        </div>
+                        <div class="col-sm-12 col-md-7">
+                            <ReactPaginate
+                                previousLabel={'< Previous'}
+                                nextLabel={'Next >'}
+                                breakLabel={'...'}
+                                breakClassName={'page-item'}
+                                breakLinkClassName={'page-link'}
+                                pageCount={Math.ceil(total / limit)}
+                                marginPagesDisplayed={2}
+                                pageRangeDisplayed={2}
+                                onPageChange={handlePageChange}
+                                containerClassName={'pagination'}
+                                subContainerClassName={'page-item'}
+                                activeClassName={'page-item active'}
+                                nextClassName={'page-item'}
+                                nextLinkClassName={'page-link'}
+                                previousClassName={'page-item'}
+                                previousLinkClassName={'page-link'}
+                                pageClassNam={'page-item'}
+                                pageLinkClassName={'page-link'}
+                            />
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,8 @@ import Loader from '../../components/common/Loader'
 import Message from '../../components/common/Message'
 import Modal from '../../components/common/Modal'
 import Layout from '../../components/Layout'
+import CountUp from 'react-countup'
+import Button from '../../components/Button'
 
 const Category = () => {
     const dispatch = useDispatch()
@@ -204,7 +206,7 @@ const Category = () => {
                         <div class="col-lg-12">
                             <button type="button" className="btn btn-light waves-effect waves-light m-1" onClick={handleShowCreateModal}>Create Category</button>
                             <div class="card">
-                                <div class="card-header"><i class="zmdi zmdi-view-dashboard"></i> Total Categoies: {categoryList.total}</div>
+                                <div class="card-header"><i class="zmdi zmdi-view-dashboard"></i> Total Categories: <CountUp end={categoryList.total} /></div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <table id="default-datatable" class="table table-bordered">
@@ -222,13 +224,18 @@ const Category = () => {
                                                             <td>{index + 1}</td>
                                                             <td>{category.name}</td>
                                                             <td>
-                                                                <button data-toggle="modal" data-target="#updateModal" className="btn btn-light btn-sm waves-effect waves-light m-1"
-                                                                    onClick={(e) => handleShowUpdateModal(e, category._id)}>
-                                                                    <i className="fa fa-edit"></i>
-                                                                </button>
-                                                                <button data-toggle="modal" data-target="#deleteModal" className="btn btn-light btn-sm waves-effect waves-light m-1"
-                                                                    onClick={(e) => handleShowDeleteModal(e, category._id)}><i className="fa fa-trash-o"></i>
-                                                                </button>
+                                                                <Button
+                                                                    status='warning'
+                                                                    icon='fa fa-edit'
+                                                                    onClick={(e) => handleShowUpdateModal(e, category._id)}
+                                                                    small
+                                                                />
+                                                                <Button
+                                                                    status='danger'
+                                                                    icon='fa fa-trash-o'
+                                                                    onClick={(e) => handleShowDeleteModal(e, category._id)}
+                                                                    small
+                                                                />
                                                             </td>
                                                         </tr>
                                                     ))

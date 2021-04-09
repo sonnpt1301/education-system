@@ -8,7 +8,8 @@ import Loader from '../../components/common/Loader'
 import Message from '../../components/common/Message'
 import Modal from '../../components/common/Modal'
 import Layout from '../../components/Layout'
-
+import CountUp from 'react-countup'
+import Button from '../../components/Button'
 
 const User = () => {
 
@@ -424,7 +425,7 @@ const User = () => {
                         <div class="col-lg-12">
                             <button type="button" className="btn btn-light waves-effect waves-light m-1" onClick={handleShowCreateModal}>Create User</button>
                             <div class="card">
-                                <div class="card-header"><i class="fa fa-user-circle"></i> Total Users: {userList.total}</div>
+                                <div class="card-header"><i class="fa fa-user-circle"></i> Total Users: <CountUp end={userList.total} /></div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <div class="row">
@@ -470,13 +471,18 @@ const User = () => {
                                                             <td>{usr.profile.address}</td>
                                                             <td>{usr.profile.city}</td>
                                                             <td>
-                                                                <button data-toggle="modal" data-target="#updateModal" className="btn btn-light btn-sm waves-effect waves-light m-1"
-                                                                    onClick={(e) => handleShowUpdateModal(e, usr._id)}>
-                                                                    <i className="fa fa-edit"></i>
-                                                                </button>
-                                                                <button data-toggle="modal" data-target="#deleteModal" className="btn btn-light btn-sm waves-effect waves-light m-1"
-                                                                    onClick={(e) => handleShowDeleteModal(e, usr._id)}><i className="fa fa-trash-o"></i>
-                                                                </button>
+                                                                <Button
+                                                                    status='warning'
+                                                                    icon='fa fa-edit'
+                                                                    onClick={(e) => handleShowUpdateModal(e, usr._id)}
+                                                                    small
+                                                                />
+                                                                <Button
+                                                                    status='danger'
+                                                                    icon='fa fa-trash-o'
+                                                                    onClick={(e) => handleShowDeleteModal(e, usr._id)}
+                                                                    small
+                                                                />
                                                             </td>
                                                         </tr>
                                                     ))
