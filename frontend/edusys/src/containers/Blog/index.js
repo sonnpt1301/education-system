@@ -111,8 +111,8 @@ const Blog = ({ _id }) => {
 
     return (
         <>
-            <div className="">
-                <div className="">
+            <div>
+                <div>
                     <ul className="nav nav-tabs nav-tabs-info nav-justified">
                         <li className="nav-item">
                             <a className="nav-link active" data-toggle="tab" onClick={() => setTab(0)} style={{ cursor: 'pointer' }}><i className="icon-home"></i> <span className="hidden-xs">Public blog</span></a>
@@ -285,7 +285,7 @@ const Blog = ({ _id }) => {
                                                 </ul>
                                             </div>
                                         </div>
-                                    )) :
+                                    )).reverse() :
                                         <div style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '20px' }}>
                                             <i>No blog</i>
                                         </div>

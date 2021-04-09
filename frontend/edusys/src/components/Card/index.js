@@ -10,7 +10,7 @@ const Card = ({ title, description, avatar, createdBy, children, status, state, 
 
     return (
         <NavLink to={{
-            pathname: `course-detail/${state}`,
+            pathname: `course-detail`,
             state: { _id: state }
         }}
             className="waves-effect">

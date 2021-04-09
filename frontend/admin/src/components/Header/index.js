@@ -22,7 +22,7 @@ const Header = () => {
                     <li class="nav-item">
                         <a class="nav-link" href="javascript:void();">
                             <div class="media align-items-center">
-                                <img src={"assets/images/logo-icon.png"} class="logo-icon" alt="logo icon" />
+                                <img src='https://edusys-project.s3-ap-southeast-1.amazonaws.com/image/logo.png' class="logo-icon" alt="logo icon" />
                                 <div class="media-body">
                                     <h5 class="logo-text">Administrator</h5>
                                 </div>

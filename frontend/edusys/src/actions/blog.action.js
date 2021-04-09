@@ -109,7 +109,7 @@ export const updateBlogStatusAction = ({ id, body, bgImage, files }) => {
             });
 
             // 2. upload bgImage (check if existed bgImage)
-            if (bgImage.name) {
+            if (bgImage?.name) {
                 const uploadBgImage = await imageCompression(bgImage, {
                     maxSizeMB: 0.1,
                     maxWidthOrHeight: 1920,

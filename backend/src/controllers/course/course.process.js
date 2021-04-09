@@ -21,14 +21,16 @@ export const getCourseService = async (courseId, user = {}) => {
             course: courseId,
             user: user._id,
         })
-        if (!checkUser && user.profile.role === 'student') {
-            return {
-                statusCode: 404,
-                message: `You haven't join this course`,
-                data: {},
+        if (user.profile.role === 'student') {
+            if (!checkUser) {
+                return {
+                    statusCode: 404,
+                    message: `You haven't join this course`,
+                    data: {},
+                }
             }
         }
-        
+
         const course = await Course.findOne({
             _id: courseId,
             isDeleted: false,

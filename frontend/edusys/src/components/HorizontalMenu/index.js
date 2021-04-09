@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useHistory } from 'react-router-dom'
 import { getListCategoryAction } from '../../actions'
 import './style.css'
 
@@ -8,7 +8,8 @@ const HorizontalMenu = () => {
 
     const dispatch = useDispatch()
     const { categoryList } = useSelector(state => state.category)
-
+    const history = useHistory()
+    console.log(history)
     useEffect(() => {
         dispatch(getListCategoryAction())
     }, [])
@@ -39,14 +40,14 @@ const HorizontalMenu = () => {
                 <li>
                     <a href="javascript:;">
                         <i class="zmdi zmdi-card-travel"></i>
-                        <span class="title">Categories</span>
+                        <span class="title" style={{ color: '#1d8aff' }}>Categories</span>
                         <span class="arrow"></span>
                     </a>
                     <ul>
                         {
                             categoryList?.category && categoryList.category.map((category, index) => (
                                 <li key={index}>
-                                    <a href="javaScript:void();">
+                                    <div>
                                         <NavLink to={{
                                             pathname: 'course',
                                             state: { categoryId: category._id }
@@ -54,21 +55,12 @@ const HorizontalMenu = () => {
                                             className="waves-effect"
                                         >
                                             {category.name}
-                                        </NavLink></a>
+                                        </NavLink>
+                                    </div>
                                 </li>
                             ))
                         }
                     </ul>
-                </li>
-                <li>
-                    <a href="javascript:;">
-                        <i class="fa fa-book" aria-hidden="true"></i>
-                        <span class="title">
-                            <NavLink to="/course">
-                                Courses
-                            </NavLink>
-                        </span>
-                    </a>
                 </li>
                 <li>
                     <a href="javascript:;">

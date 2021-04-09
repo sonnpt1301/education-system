@@ -16,23 +16,31 @@ const CourseDetail = ({ match }) => {
     const [currentCourse, setCurrentCourse] = useState({})
     const [tab, setTab] = useState(0)
     const history = useHistory()
+    const [courseId, setCourseId] = useState(history?.location?.state?._id)
 
     useEffect(() => {
-        if(error){
-            history.push(`/course?joinCourse=true&&courseId=${match.params.id}`)
+        if(error && !loadingCourseDetail){
+            history.push(`/course?joinCourse=true&&courseId=${courseId}`)
         }
     }, [error])
 
+
+    // useEffect(() => {
+    //     if(history?.location?.state?._id){
+    //         setCourseId(history?.location?.state?._id)
+    //     }
+    // }, [history?.location?.state?._id])
+
     useEffect(() => {
-        if (!courseDetail?.title || match.params.id !== courseDetail._id) {
-            dispatch(getCourseDetailAction(match.params.id))
+        if (!courseDetail?.title || courseId !== courseDetail._id) {
+            dispatch(getCourseDetailAction(courseId))
         } else {
             setCurrentCourse(courseDetail)
         }
         return () => {
             setTab(0)
         }
-    }, [match, courseDetail])
+    }, [courseId, courseDetail])
 
     return (
         <Layout>
@@ -105,7 +113,7 @@ const CourseDetail = ({ match }) => {
 
 
                                         {tab === 1 && (
-                                            <Blog _id={match.params.id} />
+                                            <Blog _id={courseId} />
                                         )}
 
 

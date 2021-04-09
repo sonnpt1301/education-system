@@ -33,14 +33,15 @@ export default (state = initState, action) => {
                 ...state,
                 loadingCourseDetail: false,
                 courseDetail: action.payload,
-                isJoin: false
+                isJoin: false,
+                error: null
             }
             break;
         case courseConstants.GET_COURSE_DETAIL_FAILURE:
             state = {
                 ...state,
                 loadingCourseDetail: false,
-                error: action.payload
+                error: action.payload,
             }
             break;
         case courseConstants.GET_COURSES_REQUEST:
@@ -151,7 +152,7 @@ export default (state = initState, action) => {
                 ...state,
                 loadingJoinCourse: false,
                 isJoin: action.payload,
-                errorJoinCourse: null
+                errorJoinCourse: null,
             }
             break;
         case courseConstants.JOIN_COURSE_FAILURE:

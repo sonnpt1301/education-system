@@ -5,7 +5,7 @@ const Footer = () => {
         <footer class="footer">
             <div class="container">
                 <div class="text-center">
-                    Copyright © 2019 Dashtreme Admin
+                    Copyright © 2021 Education System | University of Greenwich
         </div>
             </div>
         </footer>

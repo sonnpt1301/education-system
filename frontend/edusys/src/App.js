@@ -27,7 +27,7 @@ function App() {
 
         <Route exact path="/" component={Home} />
         <Route exact path="/course" component={Course} />
-        <PrivateRoute exact path="/course-detail/:id" component={CourseDetail} />
+        <PrivateRoute exact path="/course-detail" component={CourseDetail} />
         <Route exact path="/about" component={About} />
         <Route path="*" component={() => "404 NOT FOUND"} />
       </Switch>
@@ -35,4 +35,4 @@ function App() {
   );
 }
 
-export default App;
+export default App

@@ -14,6 +14,7 @@ import qs from 'query-string'
 import { Redirect, useHistory } from 'react-router'
 import Message from '../../components/common/Message'
 import { NavLink } from 'react-router-dom'
+import NoData from '../No Data'
 
 const Course = ({ location }) => {
     const dispatch = useDispatch()
@@ -90,12 +91,9 @@ const Course = ({ location }) => {
         courseList && setTotal(courseList?.total || 0);
     }, [courseList]);
 
-    useEffect(() => {
-        dispatch(getListCategoryAction())
-    }, [])
 
     useEffect(() => {
-        if (location.state.categoryId) {
+        if (location?.state?.categoryId) {
             dispatch(getListCourseAction({
                 status: filter,
                 limit,
@@ -184,7 +182,7 @@ const Course = ({ location }) => {
                     </div>
                     <div class="row">
                         {
-                            courseList?.data ? courseList.data.map(course => (
+                            courseList?.data?.length > 0 ? courseList.data.map(course => (
                                 <div class="col-12 col-lg-4">
                                     <Card
                                         title={course.title}
@@ -197,38 +195,45 @@ const Course = ({ location }) => {
                                         totalUser={course.totalUser}
                                     />
                                 </div>
-                            )) : <i>No course here</i>
+                            )) : <div className='row'>No data</div>
                         }
                     </div>
-                    <div class="row">
-                        <div class="col-sm-12 col-md-5">
-                            <div class="dataTables_info" id="default-datatable_info" role="status" aria-live="polite">
-                                Showing {limit} of {total} courses
-                    </div>
-                        </div>
-                        <div class="col-sm-12 col-md-7">
-                            <ReactPaginate
-                                previousLabel={'< Previous'}
-                                nextLabel={'Next >'}
-                                breakLabel={'...'}
-                                breakClassName={'page-item'}
-                                breakLinkClassName={'page-link'}
-                                pageCount={Math.ceil(total / limit)}
-                                marginPagesDisplayed={2}
-                                pageRangeDisplayed={2}
-                                onPageChange={handlePageChange}
-                                containerClassName={'pagination'}
-                                subContainerClassName={'page-item'}
-                                activeClassName={'page-item active'}
-                                nextClassName={'page-item'}
-                                nextLinkClassName={'page-link'}
-                                previousClassName={'page-item'}
-                                previousLinkClassName={'page-link'}
-                                pageClassNam={'page-item'}
-                                pageLinkClassName={'page-link'}
-                            />
-                        </div>
-                    </div>
+                    {
+                        courseList?.data?.length > 0 && (
+                            <div class="row">
+                                <div class="col-sm-12 col-md-5">
+
+                                    <div class="dataTables_info" id="default-datatable_info" role="status" aria-live="polite">
+                                        Showing {limit} of {total} courses
+                                    </div>
+
+                                </div>
+                                <div class="col-sm-12 col-md-7">
+                                    <ReactPaginate
+                                        previousLabel={'< Previous'}
+                                        nextLabel={'Next >'}
+                                        breakLabel={'...'}
+                                        breakClassName={'page-item'}
+                                        breakLinkClassName={'page-link'}
+                                        pageCount={Math.ceil(total / limit)}
+                                        marginPagesDisplayed={2}
+                                        pageRangeDisplayed={2}
+                                        onPageChange={handlePageChange}
+                                        containerClassName={'pagination'}
+                                        subContainerClassName={'page-item'}
+                                        activeClassName={'page-item active'}
+                                        nextClassName={'page-item'}
+                                        nextLinkClassName={'page-link'}
+                                        previousClassName={'page-item'}
+                                        previousLinkClassName={'page-link'}
+                                        pageClassNam={'page-item'}
+                                        pageLinkClassName={'page-link'}
+                                    />
+                                </div>
+                            </div>
+                        )
+                    }
+
                 </div>
             </div>
         </Layout>
