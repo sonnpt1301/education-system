@@ -1,0 +1,29 @@
+.outer-comment {
+    overflow-y: scroll;
+    height: 500px;
+}
+
+.outer-comment::-webkit-scrollbar {
+    width: 4px;
+}
+
+
+/* Track */
+
+.outer-comment::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+
+/* Handle */
+
+.outer-comment::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+
+/* Handle on hover */
+
+.outer-comment::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

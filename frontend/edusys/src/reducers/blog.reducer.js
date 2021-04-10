@@ -3,6 +3,9 @@ import { blogConstants } from '../actions/constants'
 
 const initState = {
     blogList: [],
+    blogDetail: {},
+    loadingBlogDetail: false,
+    errorBlogDetail: null,
     loading: false,
     error: null,
     loadingCreate: false,
@@ -15,6 +18,27 @@ const initState = {
 export default (state = initState, action) => {
     // eslint-disable-next-line default-case
     switch (action.type) {
+        case blogConstants.GET_BLOG_DETAIL_REQUEST:
+            state = {
+                ...state,
+                loadingBlogDetail: true
+            }
+            break;
+        case blogConstants.GET_BLOG_DETAIL_SUCCESS:
+            state = {
+                ...state,
+                loadingBlogDetail: false,
+                blogDetail: action.payload,
+                errorBlogDetail: null,
+            }
+            break;
+        case blogConstants.GET_BLOG_DETAIL_FAILURE:
+            state = {
+                ...state,
+                errorBlogDetail: action.payload,
+                loadingBlogDetail: false
+            }
+            break;
         case blogConstants.GET_BLOGS_REQUEST:
             state = {
                 ...state,

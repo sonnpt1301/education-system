@@ -6,6 +6,7 @@ import {
     deleteBlogService,
     uploadBlogBgImgService,
     uploadBlogFileService,
+    downloadFileService
 } from './blog.process.js'
 import { queryBuilder } from './blog.validator.js';
 
@@ -53,3 +54,21 @@ export const uploadBlogFile = async (req, res) => {
 
     return res.status(statusCode).send({ statusCode, message, data });
 };
+
+export const downloadFile = async (req, res) => {
+    const { statusCode, message, data } = await downloadFileService(req.params.id, req.params.fileId);
+
+    res.set({
+        // zip
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename=${message}.zip`,
+        'Content-Length': data.length,
+
+        // prevent cache
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': 0
+    });
+
+    return res.status(statusCode).send(data);
+}

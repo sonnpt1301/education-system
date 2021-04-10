@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getListBLogAction, createBlogAction } from '../../actions/blog.action'
+import { getListBLogAction, createBlogAction, downloadFileAction } from '../../actions/blog.action'
 import moment from 'moment'
-import { AWS_FOLDER } from '../../config'
+import { AWS_FOLDER, API_CONFIG } from '../../config'
 import Button from '../../components/Button'
 import Modal from '../../components/common/Modal'
 import Input from '../../components/common/Input'
 import Message from '../../components/common/Message'
-import { Figure } from 'react-bootstrap'
+import { Col, Figure, Row } from 'react-bootstrap'
 import { FileIcon, defaultStyles } from 'react-file-icon'
 import PersonalBlog from './PersonalBlog'
 import WaitingBlog from './WaitingBlog'
 import { Loader } from '../../components/common/Loader'
+
+import BlogDetail from './BlogDetail'
 
 
 const Blog = ({ _id }) => {
@@ -24,6 +26,7 @@ const Blog = ({ _id }) => {
         errorCreate
     } = useSelector(state => state.blog)
     const { user } = useSelector(state => state.auth)
+    const { courseDetail } = useSelector(state => state.course)
 
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
@@ -36,7 +39,8 @@ const Blog = ({ _id }) => {
     const [tab, setTab] = useState(0)
     const [filter, setFilter] = useState('approve')
     const [showWaitingBlogModal, setShowWaitingBlogModal] = useState(false)
-
+    const [showBlogDetailModal, setShowBlogDetailModal] = useState(false)
+    const [blogId, setBlogId] = useState('')
 
     const handleUploadBackgroundImage = (e) => {
         setBgImage(e.target.files[0])
@@ -44,8 +48,7 @@ const Blog = ({ _id }) => {
     }
 
     const handleCloseCreateModal = () => {
-        setShowCreateModal(false)
-        setMessage('')
+        resetField()
     }
 
     const handleUploadAttachFiles = (e) => {
@@ -65,6 +68,8 @@ const Blog = ({ _id }) => {
         setFilter('approve')
         setShowWaitingBlogModal(false)
     }
+
+
 
     useEffect(() => {
         if (!loadingCreate && !errorCreate) {
@@ -99,6 +104,20 @@ const Blog = ({ _id }) => {
         setShowCreateModal(false)
     }
 
+    const handleDownloadFile = (fileId, fileName, blogId) => {
+        dispatch(downloadFileAction({ fileId, fileName, blogId }))
+    };
+
+    const handleShowBlogDetailModal = (id) => {
+        setBlogId(id)
+        setShowBlogDetailModal(true)
+    }
+
+    const handleCloseBlogDetailModal = () => {
+        setBlogId('')
+        setShowBlogDetailModal(false)
+    }
+
     useEffect(() => {
         if (tab === 0) {
             dispatch(getListBLogAction({
@@ -107,7 +126,6 @@ const Blog = ({ _id }) => {
             }))
         }
     }, [_id, loadingCreate, tab, filter, showWaitingBlogModal])
-
 
     return (
         <>
@@ -171,6 +189,7 @@ const Blog = ({ _id }) => {
                                     </Figure>
                                     <Button
                                         icon='fa fa-paperclip'
+                                        status='light'
                                         long
                                         onClick={(e) => setIsAttach(!isAttach)}
                                     >
@@ -224,6 +243,17 @@ const Blog = ({ _id }) => {
                                 }
 
 
+                                {/* Blog detail */}
+                                {
+                                    showBlogDetailModal &&
+                                    <BlogDetail
+                                        showBlogDetailModal
+                                        handleCloseBlogDetailModal={handleCloseBlogDetailModal}
+                                        blogId={blogId}
+                                    />
+                                }
+
+
                                 {loading && <Loader />}
                                 <div className="row">
                                     <div className="col-7">
@@ -237,7 +267,7 @@ const Blog = ({ _id }) => {
 
                                     </div>
                                     {
-                                        user.profile.role === 'tutors' && (
+                                        user._id === courseDetail.createdBy._id && (
                                             <div className="col-5">
                                                 <Button
                                                     icon='fa fa-clock-o'
@@ -247,49 +277,74 @@ const Blog = ({ _id }) => {
                                                     long
                                                 >
                                                     Waiting for approving
-                                        </Button>
+                                                </Button>
                                             </div>
                                         )
                                     }
                                 </div>
-                                {
-                                    (blogList?.blogs?.length && !showWaitingBlogModal) ? blogList.blogs.map((blog, index) => (
-                                        <div className="card">
-                                            <div className="card-body">
-                                                <div className="user-profile" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                                    <div><img src={`${AWS_FOLDER.IMAGE}${blog.createdBy.profile.avatar}`}
-                                                        className="img-circle user-profile" alt="user avatar" /></div>
-                                                    <span><h5 className="mt-0 mb-1 ml-1">{blog.createdBy.profile.firstName + " " + blog.createdBy.profile.lastName}</h5></span>
-                                                </div>
-                                                <img className="rounded" style={{ height: '100%', width: '100%' }} src={`${AWS_FOLDER.IMAGE}${blog.bgImage}`} alt="user avatar" />
-                                                <ul className="list-unstyled" key={index}>
-                                                    <li className="media">
-                                                        <div className="media-body">
-                                                            <h5 className="mt-0 mb-0">{blog.title}</h5>
-                                                            <div style={{ paddingBottom: '25px' }}><small style={{ color: 'rgb(172 170 170)' }}>{moment(blog.createdAt).fromNow()}</small></div>
-                                                            <p>{blog.content}</p>
-                                                            {
-                                                                blog?.files?.map((file) => (
-                                                                    <div className="card">
-                                                                        <div className="card-body">
-                                                                            <div style={{ width: '40px', height: '40px', display: 'inline-block', marginBottom: '15px' }}>
-                                                                                <FileIcon extension={file.fileName.split('.').pop()} {...defaultStyles[`${file.fileName.split('.').pop()}`]} />
-                                                                            </div>
-                                                                            <span style={{ paddingLeft: '10px' }}>{file.fileName}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                ))
-                                                            }
+                                <Row>
+                                    <Col sm={1}>
+                                        
+                                    </Col>
+                                    <Col sm={10}>
+                                        {
+                                            (blogList?.blogs?.length && !showWaitingBlogModal) ? blogList.blogs.map((blog, index) => (
+                                                <div className="card">
+                                                    <div className="card-body">
+                                                        <div className="user-profile" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                                            <div><img src={`${AWS_FOLDER.IMAGE}${blog.createdBy.profile.avatar}`}
+                                                                className="img-circle user-profile" alt="user avatar" /></div>
+                                                            <span><h5 className="mt-0 mb-1 ml-1">{blog.createdBy.profile.firstName + " " + blog.createdBy.profile.lastName}</h5></span>
                                                         </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    )).reverse() :
-                                        <div style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '20px' }}>
-                                            <i>No blog</i>
-                                        </div>
-                                }
+                                                        <img className="rounded" style={{ height: '100%', width: '100%', cursor: 'pointer' }} src={`${AWS_FOLDER.IMAGE}${blog.bgImage}`} alt="user avatar"
+                                                            onClick={() => handleShowBlogDetailModal(blog._id)}
+                                                        />
+                                                        <ul className="list-unstyled" key={index}>
+                                                            <li className="media">
+                                                                <div className="media-body">
+                                                                    <h5 className="mt-0 mb-0" style={{ cursor: 'pointer' }}>{blog.title}</h5>
+                                                                    <div style={{ paddingBottom: '25px' }}><small style={{ color: 'rgb(172 170 170)' }}>{moment(blog.createdAt).fromNow()}</small></div>
+                                                                    <p>{blog.content}</p>
+                                                                    {
+                                                                        blog?.files?.length > 0 && (
+                                                                            <Button
+                                                                                icon='fa fa-paperclip'
+
+                                                                                status='info'
+                                                                                onClick={(e) => setIsAttach(!isAttach)}
+                                                                            >
+                                                                                View attach files
+                                                                            </Button>
+                                                                        )
+                                                                    }
+                                                                    {
+                                                                        isAttach && blog?.files?.map((file) => (
+                                                                            <div className="card" style={{ cursor: 'pointer' }} onClick={() => handleDownloadFile(file._id, file.fileName, blog._id)}>
+                                                                                <div className="card-body">
+                                                                                    <div style={{ width: '40px', height: '40px', display: 'inline-block', marginBottom: '15px' }}>
+                                                                                        <FileIcon extension={file.fileName.split('.').pop()} {...defaultStyles[`${file.fileName.split('.').pop()}`]} />
+                                                                                    </div>
+                                                                                    <span style={{ paddingLeft: '10px' }}>{file.fileName} </span>
+                                                                                    <span className='fa fa-download'></span>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))
+                                                                    }
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            )).reverse() :
+                                                <div style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '20px' }}>
+                                                    <i>No blog</i>
+                                                </div>
+                                        }
+                                    </Col>
+                                    <Col sm={1}>
+                                        
+                                    </Col>
+                                </Row>
                             </>
                         )}
 

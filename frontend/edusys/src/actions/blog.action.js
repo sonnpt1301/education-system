@@ -5,6 +5,31 @@ import { API_CONFIG } from '../config'
 import qs from 'qs'
 import imageCompression from 'browser-image-compression'
 
+
+export const getBlogDetailAction = ({ blogId }) => {
+    return async dispatch => {
+        try {
+            const token = getToken()
+            dispatch({ type: blogConstants.GET_BLOG_DETAIL_REQUEST })
+            const { data: { data } } = await axios.get(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/blogs/${blogId}`, {
+                headers: {
+                    'Content-type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+            dispatch({
+                type: blogConstants.GET_BLOG_DETAIL_SUCCESS,
+                payload: data,
+            });
+        } catch (error) {
+            dispatch({
+                type: blogConstants.GET_BLOG_DETAIL_FAILURE,
+                payload: error.response?.data?.message || error.message,
+            });
+        }
+    }
+}
+
 export const getListBLogAction = (filter) => {
     return async dispatch => {
         try {
@@ -174,6 +199,33 @@ export const deleteBlogAction = ({ blogId }) => {
                 type: blogConstants.DELETE_BLOG_FAILURE,
                 payload: error.response?.data?.message || error.message,
             })
+        }
+    }
+}
+
+export const downloadFileAction = ({ fileId, fileName, blogId }) => {
+    return async dispatch => {
+        try {
+            const token = getToken();
+            const data = await fetch(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/blogs/${blogId}/files/${fileId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                responseType: 'blob',
+            });
+
+            const blob = await data.blob();
+            let url = window.URL.createObjectURL(blob, { type: 'application/zip' });
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName + '.zip');
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (error) {
+            console.log(error.response?.data?.message || error.message);
         }
     }
 }
