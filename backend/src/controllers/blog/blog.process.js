@@ -1,9 +1,12 @@
 import { Blog } from '../../models/blog.model.js'
 import { Course } from '../../models/course.model.js'
+import { Comment } from '../../models/comment.model.js'
 import { sanitizeUpdateData } from './blog.validator.js'
 import { downloadAWS, uploadAWS } from '../../common/aws.js';
 import { AWS_FOLDER, EDUSYS_BUCKET } from '../../common/enum.js';
 import md5 from 'md5';
+import mongoDb from 'mongodb'
+import { zipFile } from '../../utils/index.js'
 
 export const getBlogService = async (blogId) => {
     const response = {
@@ -28,18 +31,15 @@ export const getBlogService = async (blogId) => {
             };
         }
 
-        // const comments = await Comment.find({ blog: blog._id })
-        //     .sort({ updatedAt: -1 })
-        //     .populate({ path: 'user', select: 'email profile.firstName profile.lastName profile.avatar' })
-        //     .select('user')
-        //     .limit(10)
-        //     .lean();
+        const comments = await Comment.find({ blog: blog._id })
+            .populate({ path: 'user', select: 'email profile.firstName profile.lastName profile.avatar' })
+            .lean();
+        console.log(comments)
 
-        // response.data = {
-        //     ...blog,
-        //     comments
-        // };
-        response.data = blog
+        response.data = {
+            ...blog,
+            comments
+        };
     } catch (err) {
         response.statusCode = 500;
         response.message = err.message;
@@ -117,6 +117,7 @@ export const createBlogService = async (data, currentUser) => {
                 data: {}
             }
         }
+
 
         const blog = await Blog.create({
             title: data.title,
@@ -289,3 +290,52 @@ export const uploadBlogFileService = async (blogId, files) => {
 
     return response;
 };
+
+export const downloadFileService = async (blogId, fileId) => {
+    const response = {
+        statusCode: 200,
+        message: 'Download file successful',
+        data: {}
+    }
+    try {
+        const file = await Blog.aggregate([
+            {
+                $match: {
+                    _id: new mongoDb.ObjectId(blogId)
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    files: 1
+                }
+            },
+            {
+                $unwind: '$files'
+            },
+            {
+                $match: {
+                    'files._id': new mongoDb.ObjectId(fileId)
+                }
+            }
+        ]);
+
+        if (!file[0].files) {
+            return {
+                statusCode: 404,
+                message: 'File not found',
+                data: {},
+            };
+        }
+
+        const downloadFile = await downloadAWS(EDUSYS_BUCKET, `${AWS_FOLDER.FILE}${file[0].files.filePath}`);
+
+        response.message = file[0].files.fileName;
+        response.data = zipFile(file[0].files.fileName, downloadFile.Body);
+
+    } catch (err) {
+        response.statusCode = 500;
+        response.message = err.message;
+    }
+    return response
+}
