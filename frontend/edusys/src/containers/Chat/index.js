@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import { Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { getListMessageAction, getListUserAction, uploadFileAction } from '../../actions'
+import { afterSendMessage, getListMessageAction, getListUserAction, uploadFileAction } from '../../actions'
 import { AWS_FOLDER, API_CONFIG } from '../../config'
 import moment from 'moment'
 import './style.css'
@@ -71,8 +71,14 @@ const Chat = () => {
         const room = 'Education'
 
         socket.on('Output message', (data) => {
-            dispatch(getListMessageAction())
+            dispatch(afterSendMessage(data))
         })
+
+        if (data?.fileName) {
+            socket.on('Output message', (data) => {
+                dispatch(getListMessageAction())
+            })
+        }
 
         socket.emit('room', room);
 
@@ -95,7 +101,7 @@ const Chat = () => {
     }, [search])
 
     useEffect(() => {
-        if (data.fileName) {
+        if (data) {
             console.log(data)
             socket.emit('Send message', {
                 file: data.fileName,
@@ -103,7 +109,7 @@ const Chat = () => {
                 receiver: messages[index]?.sender?._id === user._id ? messages[index]?.receiver?._id : messages[index]?.sender?._id,
             })
         }
-    }, [data.fileName])
+    }, [data])
 
     useEffect(() => {
         dispatch(getListMessageAction())

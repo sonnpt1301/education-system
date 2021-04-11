@@ -56,3 +56,10 @@ export const uploadFileAction = ({ file }) => {
         }
     }
 }
+
+export const afterSendMessage = (data) => async (dispatch) => {
+    dispatch({
+        type: chatConstants.GET_MESSAGE_AFTER_SEND,
+        payload: data
+    });
+};

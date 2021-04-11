@@ -9,6 +9,8 @@ const initState = {
     error: null
 }
 
+let newMessage
+
 export default (state = initState, action) => {
     switch (action.type) {
         case chatConstants.GET_MESSAGES_REQUEST:
@@ -52,7 +54,14 @@ export default (state = initState, action) => {
                 loading: false
             }
             break;
-
+        case chatConstants.GET_MESSAGE_AFTER_SEND:
+            newMessage = [...state.messages]
+            const index = newMessage.findIndex(x => x._id === action.payload.data._id)
+            newMessage[index] = action.payload.data
+            state = {
+                messages: newMessage
+            }
+            break;
     }
     return state
 }
