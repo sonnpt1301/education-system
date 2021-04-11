@@ -12,4 +12,5 @@ export default (prefix) => {
 
     router.get('/', chatController.getListMessage);
     router.post('/', chatController.createMessage)
+    router.post('/upload-file',  multer({}).single('file'), chatController.uploadFile)
 };

@@ -26,3 +26,33 @@ export const getListMessageAction = () => {
         }
     }
 }
+
+export const uploadFileAction = ({ file }) => {
+    return async dispatch => {
+        try {
+
+            console.log(file)
+            const token = getToken()
+            dispatch({ type: chatConstants.UPLOAD_FILE_REQUEST })
+
+            const payloadFile = new FormData()
+            payloadFile.append('file', file)
+
+            const { data: { data } } = await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/chats/upload-file`, payloadFile, {
+                headers: {
+                    'Content-type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            })
+            dispatch({
+                type: chatConstants.UPLOAD_FILE_SUCCESS,
+                payload: data
+            })
+        } catch (error) {
+            dispatch({
+                type: chatConstants.UPLOAD_FILE_FAILURE,
+                payload: error.response?.data?.message || error.message,
+            })
+        }
+    }
+}

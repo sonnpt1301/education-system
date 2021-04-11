@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import { Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { getListMessageAction, getListUserAction } from '../../actions'
+import { getListMessageAction, getListUserAction, uploadFileAction } from '../../actions'
 import { AWS_FOLDER, API_CONFIG } from '../../config'
 import moment from 'moment'
 import './style.css'
@@ -11,6 +11,7 @@ import Button from '../../components/Button'
 import Modal from '../../components/common/Modal'
 import { Loader } from '../../components/common/Loader'
 import Message from '../../components/common/Message'
+import Input from '../../components/common/Input'
 
 let socket
 let messagesEnd
@@ -19,7 +20,7 @@ const Chat = () => {
 
     const dispatch = useDispatch()
 
-    const { messages, loading } = useSelector(state => state.chat)
+    const { messages, loading, data } = useSelector(state => state.chat)
     const { user } = useSelector(state => state.auth)
     const { userList } = useSelector(state => state.user)
 
@@ -28,8 +29,19 @@ const Chat = () => {
     const [search, setSearch] = useState('')
     const [showCreateNewMessage, setShowCreateNewMessage] = useState(false)
     const [error, setError] = useState('')
+    const [file, setFile] = useState()
+
+
     const handleShowBoxMessage = (index) => {
         setIndex(index)
+    }
+
+    const handleUploadFile = (e) => {
+        const fileUpload = e.target.files[0]
+        dispatch(uploadFileAction({
+            file: fileUpload
+        }))
+
     }
 
     const handleCreateNewMessage = (id) => {
@@ -83,8 +95,18 @@ const Chat = () => {
     }, [search])
 
     useEffect(() => {
-        dispatch(getListMessageAction())
+        if (data.fileName) {
+            console.log(data)
+            socket.emit('Send message', {
+                file: data.fileName,
+                sender: user._id,
+                receiver: messages[index]?.sender?._id === user._id ? messages[index]?.receiver?._id : messages[index]?.sender?._id,
+            })
+        }
+    }, [data.fileName])
 
+    useEffect(() => {
+        dispatch(getListMessageAction())
     }, [])
 
     return (
@@ -148,15 +170,15 @@ const Chat = () => {
                                                 >
                                                     <div className="user-profile" style={{ display: 'flex', alignItems: 'center' }}>
                                                         <img style={{ margin: '5px' }} src={`${AWS_FOLDER.IMAGE}${msg.sender._id !== user._id ?
-                                                            msg.sender.profile.avatar :
-                                                            msg.receiver.profile.avatar
+                                                            msg?.sender?.profile?.avatar :
+                                                            msg?.receiver?.profile?.avatar
                                                             }`}
                                                             className="img-circle user-profile" alt="user avatar"
                                                         />
                                                         <div style={{ paddingLeft: '10px' }} className="mt-0 mb-1 ml-1">{
                                                             msg.sender._id !== user._id ?
-                                                                msg.sender.profile.firstName + ' ' + msg.sender.profile.lastName :
-                                                                msg.receiver.profile.firstName + ' ' + msg.receiver.profile.lastName
+                                                                msg?.sender?.profile?.firstName + ' ' + msg?.sender?.profile?.lastName :
+                                                                msg?.receiver?.profile?.firstName + ' ' + msg?.receiver?.profile?.lastName
                                                         }</div>
                                                     </div>
                                                 </li>
@@ -191,34 +213,44 @@ const Chat = () => {
                                                                 <img src={`${AWS_FOLDER.IMAGE}${msg?.sender?.profile?.avatar}`}
                                                                     className="img-circle user-profile" alt="user avatar"
                                                                 />
-                                                                <div className="card ml-1" style={{ borderRadius: '15px', marginBottom: '0' }}>
-                                                                    <div className="card-body" style={{ padding: '5px 20px' }}>
-                                                                        <div className="list-unstyled">
-                                                                            <div className="media">
-                                                                                <div className="media-body" style={{ wordBreak: 'break-all' }}>
-                                                                                    {msg.messages}
+                                                                {
+                                                                    msg.file ?
+                                                                        <img src={`${AWS_FOLDER.IMAGE}${msg?.file}`} alt="image_upload"
+                                                                            style={{ width: '350px', height: '350px', borderRadius: 'inherit', boxShadow: 'none' }} /> :
+                                                                        <div className="card ml-1" style={{ borderRadius: '15px', marginBottom: '0', marginRight: '5px' }}>
+                                                                            <div className="card-body" style={{ padding: '5px 20px' }}>
+                                                                                <div className="list-unstyled">
+                                                                                    <div className="media">
+                                                                                        <div className="media-body" style={{ wordBreak: 'break-all' }}>
+                                                                                            {msg.messages}
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
+                                                                }
                                                             </div>
                                                             <div style={{ wordBreak: 'break-all' }}><small style={{ marginLeft: '60px', color: 'rgb(172 170 170)' }}>{moment(msg.createdAt).fromNow()}</small></div>
                                                         </>
                                                     ) : (
                                                         <>
                                                             <div className="user-profile" style={{ display: 'flex', marginTop: '10px', justifyContent: 'flex-end' }}>
-                                                                <div className="card ml-1" style={{ borderRadius: '15px', backgroundColor: 'rgb(0, 132, 255)', marginBottom: '0', marginRight: '5px' }}>
-                                                                    <div className="card-body" style={{ padding: '5px 20px' }}>
-                                                                        <div className="list-unstyled">
-                                                                            <div className="media">
-                                                                                <div className="media-body" style={{ wordBreak: 'break-all', color: 'white' }}>
-                                                                                    {msg.messages}
+                                                                {
+                                                                    msg.file ?
+                                                                        <img src={`${AWS_FOLDER.IMAGE}${msg?.file}`} alt="image_upload"
+                                                                            style={{ width: '350px', height: '350px', borderRadius: 'inherit', boxShadow: 'none' }} /> :
+                                                                        <div className="card ml-1" style={{ borderRadius: '15px', backgroundColor: 'rgb(0, 132, 255)', marginBottom: '0', marginRight: '5px' }}>
+                                                                            <div className="card-body" style={{ padding: '5px 20px' }}>
+                                                                                <div className="list-unstyled">
+                                                                                    <div className="media">
+                                                                                        <div className="media-body" style={{ wordBreak: 'break-all', color: 'white' }}>
+                                                                                            {msg.messages}
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
+                                                                }
                                                                 <img src={`${AWS_FOLDER.IMAGE}${msg?.sender?.profile?.avatar}`}
                                                                     className="img-circle user-profile" alt="user avatar"
                                                                 />
@@ -230,6 +262,7 @@ const Chat = () => {
                                             </div>
                                         ))
                                     }
+
                                     <div
                                         ref={el => {
                                             messagesEnd = el;
@@ -238,18 +271,46 @@ const Chat = () => {
                                     />
                                 </div>
                                 {error && <Message variant='danger'>{error}</Message>}
-                                <input type="text"
-                                    class="form-control form-control-rounded"
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    onKeyPress={event => event.key === 'Enter' && sendMessageHandler()} />
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <input
+                                        id='upload-file'
+                                        type='file'
+                                        name={file}
+                                        onChange={handleUploadFile}
+                                        accept='image/*'
+                                        lang="en"
+                                        style={{ display: 'none' }}
+                                    />
+                                    <Button
+                                        status='info'
+                                        icon='fa fa-paperclip'
+                                        onClick={() => document.getElementById('upload-file').click()}
+                                    >
+
+                                    </Button>
+                                    <input type="text"
+                                        class="form-control form-control-rounded"
+                                        value={message}
+                                        onChange={(e) => setMessage(e.target.value)}
+                                        onKeyPress={event => event.key === 'Enter' && sendMessageHandler()} />
+                                    {
+                                        message && (
+                                            <Button
+                                                status='info'
+                                                icon='fa fa-send'
+                                            >
+
+                                            </Button>
+                                        )
+                                    }
+                                </div>
                             </div>
 
                         </Col>
                     </Row>
                 </div>
             </div>
-        </Layout>
+        </Layout >
     )
 }
 

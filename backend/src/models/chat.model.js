@@ -7,6 +7,7 @@ const ChatSchema = new mongoose.Schema({
         sender: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
         receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
         messages: String,
+        file: String,
         createdAt: Date
     }]
 }, { timestamps: true })

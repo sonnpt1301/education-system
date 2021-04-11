@@ -5,6 +5,7 @@ import { chatConstants } from '../actions/constants'
 const initState = {
     messages: [],
     loading: false,
+    data: {},
     error: null
 }
 
@@ -30,13 +31,28 @@ export default (state = initState, action) => {
                 loading: false
             }
             break;
-        case chatConstants.GET_MESSAGE_AFTER_SEND:
+        case chatConstants.UPLOAD_FILE_REQUEST:
             state = {
                 ...state,
-                messages: state.messages.concat(action.payload.msg),
+                loading: true
+            }
+            break;
+        case chatConstants.UPLOAD_FILE_SUCCESS:
+            state = {
+                ...state,
+                data: action.payload,
+                loading: false,
+                error: null
+            }
+            break;
+        case chatConstants.UPLOAD_FILE_FAILURE:
+            state = {
+                ...state,
+                error: action.payload.error,
                 loading: false
             }
             break;
+
     }
     return state
 }

@@ -39,7 +39,7 @@ const Input = (props) => {
         case 'file':
             input = <div class="form-group">
                 <label>{props.label} {props.important && <span style={{ color: 'red' }}>*</span>}</label>
-                <input type={props.type} className="form-control" placeholder={props.placeholder}
+                <input id={props.id} type={props.type} className="form-control" placeholder={props.placeholder}
                     name={props.name}
                     onChange={props.onChange}
                     {...props}

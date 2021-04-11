@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
         })
       }
       const newMessage = await Chat.findOneAndUpdate({ _id: message._id }, {
-        $push: { messages: { messages: data.message, sender: data.sender, receiver: data.receiver, createdAt: Date.now() } }
+        $push: { messages: { messages: data.message, file: data?.file, sender: data.sender, receiver: data.receiver, createdAt: Date.now() } }
       }, { new: true })
       response.data = await newMessage
         .populate({ path: 'sender', select: 'email profile' })
