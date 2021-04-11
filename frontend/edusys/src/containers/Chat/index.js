@@ -74,12 +74,6 @@ const Chat = () => {
             dispatch(afterSendMessage(data))
         })
 
-        if (data?.fileName) {
-            socket.on('Output message', (data) => {
-                dispatch(getListMessageAction())
-            })
-        }
-
         socket.emit('room', room);
 
 
@@ -102,7 +96,6 @@ const Chat = () => {
 
     useEffect(() => {
         if (data?.fileName) {
-            console.log(data)
             socket.emit('Send message', {
                 file: data.fileName,
                 sender: user._id,
