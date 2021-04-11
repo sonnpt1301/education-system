@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import { Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { getListMessageAction } from '../../actions'
+import { getListMessageAction, getListUserAction } from '../../actions'
 import { AWS_FOLDER, API_CONFIG } from '../../config'
 import moment from 'moment'
 import './style.css'
 import { io } from 'socket.io-client'
+import Button from '../../components/Button'
+import Modal from '../../components/common/Modal'
+import { Loader } from '../../components/common/Loader'
+import Message from '../../components/common/Message'
 
 let socket
 let messagesEnd
@@ -14,24 +18,41 @@ const Chat = () => {
     const endpoint = API_CONFIG.END_POINT
 
     const dispatch = useDispatch()
-    const { messages } = useSelector(state => state.chat)
+
+    const { messages, loading } = useSelector(state => state.chat)
     const { user } = useSelector(state => state.auth)
+    const { userList } = useSelector(state => state.user)
+
     const [index, setIndex] = useState(0)
     const [message, setMessage] = useState('')
-
+    const [search, setSearch] = useState('')
+    const [showCreateNewMessage, setShowCreateNewMessage] = useState(false)
+    const [error, setError] = useState('')
     const handleShowBoxMessage = (index) => {
         setIndex(index)
     }
 
-    const sendMessageHandler = (e) => {
+    const handleCreateNewMessage = (id) => {
+        socket.emit('Send message', {
+            sender: user._id,
+            receiver: id
+        })
+        setShowCreateNewMessage(false)
+    }
 
+    const sendMessageHandler = (e) => {
+        if (message === '') {
+            return setError('Please write your message...!!!')
+        }
         socket.emit('Send message', {
             message,
             sender: user._id,
             receiver: messages[index].sender._id === user._id ? messages[index].receiver._id : messages[index].sender._id,
         })
         setMessage('')
+        setError('')
     }
+
 
     useEffect(() => {
         socket = io(endpoint)
@@ -55,17 +76,68 @@ const Chat = () => {
     })
 
     useEffect(() => {
+        dispatch(getListUserAction({
+            firstName: search,
+            isDeleted: false
+        }))
+    }, [search])
+
+    useEffect(() => {
         dispatch(getListMessageAction())
+
     }, [])
 
     return (
         <Layout>
+            {loading && <Loader />}
             <div className="content-wrapper">
                 <div className="container-fluid">
+
+                    <Modal
+                        modalTitle={'New Message'}
+                        show={showCreateNewMessage}
+                        handleClose={() => setShowCreateNewMessage(false)}
+                        onHide={() => setShowCreateNewMessage(false)}
+                        size='sm'
+                    >
+                        <input type="text"
+                            placeholder='Search...'
+                            class="form-control form-control-rounded"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        {
+                            userList?.data && userList.data.map((user, index) => (
+                                <ul class="list-group" style={{ paddingTop: '5px' }}>
+
+                                    <li className="d-flex justify-content-between align-items-center list-friend-css"
+                                        onClick={() => handleCreateNewMessage(user._id)}
+                                    >
+                                        <div className="user-profile" style={{ display: 'flex', alignItems: 'center' }}>
+                                            <img style={{ margin: '5px' }} src={`${AWS_FOLDER.IMAGE}${user.profile.avatar}`}
+                                                className="img-circle user-profile" alt="user avatar"
+                                            />
+                                            <div style={{ paddingLeft: '10px' }} className="mt-0 mb-1 ml-1">{
+                                                user.profile.firstName + ' ' + user.profile.lastName
+                                            }</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            ))
+                        }
+                    </Modal>
+
+
                     <Row>
                         <Col sm={3}>
                             <div className="card">
-                                <div className="card-header text-uppercase" style={{ margin: '7px' }}>Friends</div>
+                                <div className="card-header text-uppercase" style={{ margin: '7px' }}>Friends <span>
+                                    <Button
+                                        status='light'
+                                        icon='fa fa-edit'
+                                        onClick={() => setShowCreateNewMessage(true)}
+                                    />
+                                </span></div>
                                 <div className="card-body outer-message" style={{ padding: '0' }}>
                                     {
                                         messages.map((msg, index) => (
@@ -165,12 +237,14 @@ const Chat = () => {
                                         style={{ float: 'left', clear: 'both' }}
                                     />
                                 </div>
+                                {error && <Message variant='danger'>{error}</Message>}
+                                <input type="text"
+                                    class="form-control form-control-rounded"
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    onKeyPress={event => event.key === 'Enter' && sendMessageHandler()} />
                             </div>
-                            <input type="text"
-                                class="form-control form-control-rounded"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                onKeyPress={event => event.key === 'Enter' && sendMessageHandler()} />
+
                         </Col>
                     </Row>
                 </div>

@@ -42,19 +42,11 @@ export const createMessageService = async (data, currentUser) => {
             ]
         })
         if (!message) {
-            const message = await Chat.create({
+            await Chat.create({
                 sender: currentUser._id,
-                receiver: data.receiver
+                receiver: data.receiver,
+                messages: []
             })
-            const newMessage = await Chat.findOneAndUpdate({ _id: message._id }, {
-                $push: { messages: { messages: data.messages, sender: currentUser._id, receiver: data.receiver } }
-            }, { new: true })
-            response.data = await newMessage
-                .populate({ path: 'sender', select: 'email profile' })
-                .populate({ path: 'messages.sender', select: 'email profile' })
-                .populate({ path: 'messages.receiver', select: 'email profile' })
-                .populate({ path: 'receiver', select: 'email profile' })
-                .execPopulate()
         }
         const newMessage = await Chat.findOneAndUpdate({ _id: message._id }, {
             $push: { messages: { messages: data.messages, sender: currentUser._id, receiver: data.receiver } }

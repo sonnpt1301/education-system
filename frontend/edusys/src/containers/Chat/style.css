@@ -32,3 +32,7 @@
     cursor: pointer;
     padding-left: 10px;
 }
+
+.list-group{
+    box-shadow: none
+}

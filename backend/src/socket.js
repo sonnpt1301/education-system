@@ -62,7 +62,6 @@ io.on("connection", (socket) => {
       data: {}
     }
     try {
-      console.log(data)
       const message = await Chat.findOne({
         $or: [
           { $and: [{ sender: data.sender }, { receiver: data.receiver }] },
@@ -70,22 +69,14 @@ io.on("connection", (socket) => {
         ]
       })
       if (!message) {
-        const message = await Chat.create({
+        await Chat.create({
           sender: data.sender,
-          receiver: data.receiver
+          receiver: data.receiver,
+          messages: []
         })
-        const newMessage = await Chat.findOneAndUpdate({ _id: message._id }, {
-          $push: { messages: { messages: data.message, sender: data.sender, receiver: data.receiver } }
-        }, { new: true })
-        response.data = await newMessage
-          .populate({ path: 'sender', select: 'email profile' })
-          .populate({ path: 'messages.sender', select: 'email profile' })
-          .populate({ path: 'messages.receiver', select: 'email profile' })
-          .populate({ path: 'receiver', select: 'email profile' })
-          .execPopulate()
       }
       const newMessage = await Chat.findOneAndUpdate({ _id: message._id }, {
-        $push: { messages: { messages: data.message, sender: data.sender, receiver: data.receiver } }
+        $push: { messages: { messages: data.message, sender: data.sender, receiver: data.receiver, createdAt: Date.now() } }
       }, { new: true })
       response.data = await newMessage
         .populate({ path: 'sender', select: 'email profile' })

@@ -11,5 +11,5 @@ export default (prefix) => {
     prefix.use('/chats', verifyToken, router);
 
     router.get('/', chatController.getListMessage);
-    router.post('/', chatValidator.newMessage, validateRequest, chatController.createMessage)
+    router.post('/', chatController.createMessage)
 };
