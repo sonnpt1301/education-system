@@ -101,7 +101,7 @@ const Chat = () => {
     }, [search])
 
     useEffect(() => {
-        if (data) {
+        if (data?.fileName) {
             console.log(data)
             socket.emit('Send message', {
                 file: data.fileName,
@@ -109,7 +109,7 @@ const Chat = () => {
                 receiver: messages[index]?.sender?._id === user._id ? messages[index]?.receiver?._id : messages[index]?.sender?._id,
             })
         }
-    }, [data])
+    }, [data?.fileName])
 
     useEffect(() => {
         dispatch(getListMessageAction())
