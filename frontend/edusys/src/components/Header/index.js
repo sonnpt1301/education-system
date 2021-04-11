@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 import { AWS_FOLDER } from '../../config'
 import { logoutAction } from '../../actions'
+import { NavLink } from 'react-router-dom'
 
 const Header = () => {
     const dispatch = useDispatch()
@@ -50,7 +51,13 @@ const Header = () => {
                                 </a>
                             </li>
                             <li class="dropdown-divider"></li>
-                            <li class="dropdown-item"><i class="icon-envelope mr-2"></i> Inbox</li>
+                            <li class="dropdown-item">
+                                <div style={{ cursor: 'pointer' }}>
+                                    <NavLink to='/message' style={{ color: 'black' }}>
+                                        <i class="icon-envelope mr-2"></i> Inbox
+                                        </NavLink>
+                                </div>
+                            </li>
                             <li class="dropdown-divider"></li>
                             <li class="dropdown-item"><i class="icon-settings mr-2"></i> Setting</li>
                             <li class="dropdown-divider"></li>
