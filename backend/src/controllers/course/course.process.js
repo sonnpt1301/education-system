@@ -47,6 +47,12 @@ export const getCourseService = async (courseId, user = {}) => {
             .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
             .lean()
 
+        // List user in the course
+        const listUserInCourse = await UserCourse.find({ course: course._id })
+            .populate({ path: 'user', select: 'email profile.firstName profile.lastName profile.avatar' })
+
+        const totalUserInCourse = await UserCourse.countDocuments({ course: course._id })
+
         if (!course) {
             return {
                 statusCode: 404,
@@ -55,7 +61,7 @@ export const getCourseService = async (courseId, user = {}) => {
             };
         }
 
-        response.data = { ...course, videos}
+        response.data = { ...course, totalUserInCourse, listUserInCourse, videos }
     } catch (err) {
         response.statusCode = 500;
         response.message = err.message;
@@ -336,8 +342,9 @@ export const uploadVideoService = async (courseId, data, file, currentUser) => {
         })
 
         video.file = `${md5(Date.now())}.${md5(file.buffer)}.${file.originalname.split('.').pop()}`
-        await uploadAWS(EDUSYS_BUCKET, `${AWS_FOLDER.VIDEO}${video.file}`, file.buffer);
+        await uploadAWS(EDUSYS_BUCKET, `${AWS_FOLDER.VIDEO}${video.file}`, file.buffer)
 
+        await video.save()
 
         response.data = await video
             .populate({ path: 'course', select: 'title' })

@@ -49,6 +49,9 @@ const CourseDetail = ({ match }) => {
     const history = useHistory()
     const [courseId, setCourseId] = useState(history?.location?.state?._id)
 
+
+    const [showListUserInCourse, setShowListUserInCourse] = useState(false)
+
     const handleUploadBackgroundImage = (e) => {
         setBgImage(e.target.files[0])
         setPreviewBgImage(URL.createObjectURL(e.target.files[0]))
@@ -142,7 +145,7 @@ const CourseDetail = ({ match }) => {
         return () => {
             setTab(0)
         }
-    }, [courseId, courseDetail, loadingUpdate])
+    }, [courseId, courseDetail, loadingUpdate, loadingUploadVideo, loadingUploadVideo])
 
     return (
         <Layout>
@@ -272,9 +275,27 @@ const CourseDetail = ({ match }) => {
                                             <p style={{ color: 'black', fontSize: '16px', paddingTop: '15px' }}><strong>Duration:</strong> {formatDate(currentCourse?.fromDate) + ' - ' + formatDate(currentCourse?.toDate)}</p>
                                             <p style={{ color: 'black', fontSize: '16px' }}><strong>Category:</strong> {currentCourse?.category?.name}</p>
                                         </div>
+                                        <div className="pull-right" style={{ cursor: 'pointer' }} onClick={() => setShowListUserInCourse(true)}>
+                                            <p style={{ color: 'black', fontSize: '16px' }}>
+                                                <strong>Total students: </strong>{currentCourse.totalUserInCourse}
+                                                <span className='fa fa-user-circle'></span>
+                                            </p>
+                                        </div>
                                     </blockquote>
                                 </div>
                             </div>
+                            <Modal
+                                show={showListUserInCourse}
+                                modalTitle='List students'
+                                handleClose={() => setShowListUserInCourse(false)}
+                                onHide={() => setShowListUserInCourse(false)}
+                            >
+                                {
+                                    currentCourse?.listUserInCourse && currentCourse?.listUserInCourse.map((user, index) => (
+                                        <li class="list-group-item">{index + 1}. {user.user.profile.firstName + ' ' + user.user.profile.lastName}</li>
+                                    ))
+                                }
+                            </Modal>
                         </Col>
                     </Row>
 
@@ -301,30 +322,38 @@ const CourseDetail = ({ match }) => {
                                                     <h3>Description</h3>
                                                     <p>{currentCourse?.description}</p>
                                                     <hr />
-                                                    <Button
-                                                        status='info'
-                                                        icon='fa fa-plus'
-                                                        onClick={() => setUploadVideoModal(true)}
-                                                    >
-                                                        Upload video
-                                                </Button>
                                                     {
-                                                        currentCourse?.videos?.length > 0 ? currentCourse.videos.map((video, index) => (
-                                                            <Row>
-                                                                <Col lg={12} sm={4}>
+                                                        user?._id === currentCourse?.createdBy?._id && (
+                                                            <Button
+                                                                status='info'
+                                                                icon='fa fa-plus'
+                                                                onClick={() => setUploadVideoModal(true)}
+                                                            >
+                                                                Upload video
+                                                            </Button>
+                                                        )
+                                                    }
+                                                    <div class="row">
+                                                        {
+                                                            currentCourse?.videos?.length > 0 ? currentCourse.videos.map((video, index) => (
+                                                                <div class="col-12 col-lg-4 card-zoom" style={{ textAlign: '-webkit-center' }}>
                                                                     <ReactPlayer
                                                                         url={`${AWS_FOLDER.VIDEO}${video.file}`}
                                                                         className='react-player'
                                                                         controls={true}
-                                                                        width={350}
+                                                                        width={500}
                                                                         height={300}
-                                                                    />
-                                                                </Col>
-                                                            </Row>
-                                                        )) : <i>No video upload</i>
-                                                    }
-                                                </div>
+                                                                        style={{ border: '1px solid #14b6ff' }}
 
+                                                                    />
+                                                                    <h4>{video.name}</h4>
+                                                                </div>
+                                                            )) : <div>
+                                                                <i>No video upload</i>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
 
                                                 <Modal
                                                     modalTitle={'Upload video'}
