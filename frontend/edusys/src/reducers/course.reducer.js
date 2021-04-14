@@ -17,6 +17,8 @@ const initState = {
     errorSendRequest: null,
     loadingJoinCourse: false,
     errorJoinCourse: null,
+    loadingUploadVideo: false,
+    errorUploadVideo: null,
     isJoin: {}
 }
 export default (state = initState, action) => {
@@ -160,6 +162,26 @@ export default (state = initState, action) => {
                 ...state,
                 errorJoinCourse: action.payload,
                 loadingJoinCourse: false
+            }
+            break;
+        case courseConstants.UPLOAD_VIDEO_COURSE_REQUEST:
+            state = {
+                ...state,
+                loadingUploadVideo: true
+            }
+            break;
+        case courseConstants.UPLOAD_VIDEO_COURSE_SUCCESS:
+            state = {
+                ...state,
+                loadingUploadVideo: false,
+                errorUploadVideo: null,
+            }
+            break;
+        case courseConstants.UPLOAD_VIDEO_COURSE_FAILURE:
+            state = {
+                ...state,
+                errorUploadVideo: action.payload,
+                loadingUploadVideo: false
             }
             break;
 

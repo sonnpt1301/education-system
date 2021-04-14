@@ -4,6 +4,7 @@ import { mailer } from '../../common/mailer.js'
 import { Category } from '../../models/category.model.js'
 import { Course } from '../../models/course.model.js'
 import { User } from '../../models/user.model.js'
+import { Video } from '../../models/video.model.js'
 import { UserCourse } from '../../models/user-course.model.js'
 import { sanitizeUpdateData } from './course.validator.js'
 import md5 from 'md5';
@@ -42,6 +43,10 @@ export const getCourseService = async (courseId, user = {}) => {
             .populate({ path: 'category', select: 'name' })
             .lean();
 
+        const videos = await Video.find({ course: course._id })
+            .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
+            .lean()
+
         if (!course) {
             return {
                 statusCode: 404,
@@ -50,7 +55,7 @@ export const getCourseService = async (courseId, user = {}) => {
             };
         }
 
-        response.data = course
+        response.data = { ...course, videos}
     } catch (err) {
         response.statusCode = 500;
         response.message = err.message;
@@ -297,4 +302,49 @@ export const uploadCourseBgImgService = async (courseId, file) => {
     }
 
     return response;
-};
+}
+
+export const uploadVideoService = async (courseId, data, file, currentUser) => {
+    const response = {
+        statusCode: 201,
+        message: 'Upload video course successfully',
+        data: {}
+    }
+    try {
+        const course = await Course.findOne({ _id: courseId })
+        if (!course) {
+            return {
+                statusCode: 404,
+                message: 'Course not found',
+                data: {}
+            }
+        }
+        const checkVideo = await Video.findOne({ name: data.name })
+
+        if (checkVideo) {
+            return {
+                statusCode: 400,
+                message: 'The video name has already been existed',
+                data: {}
+            }
+        }
+
+        const video = await Video.create({
+            name: data.name,
+            course: courseId,
+            createdBy: currentUser._id,
+        })
+
+        video.file = `${md5(Date.now())}.${md5(file.buffer)}.${file.originalname.split('.').pop()}`
+        await uploadAWS(EDUSYS_BUCKET, `${AWS_FOLDER.VIDEO}${video.file}`, file.buffer);
+
+
+        response.data = await video
+            .populate({ path: 'course', select: 'title' })
+            .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
+    } catch (err) {
+        response.statusCode = 500;
+        response.message = err.message;
+    }
+    return response
+}

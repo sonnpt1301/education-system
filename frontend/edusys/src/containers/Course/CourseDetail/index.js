@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Col, Figure, Row, Tab, Tabs } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { getCourseDetailAction, updateCourseAction } from '../../../actions'
+import { getCourseDetailAction, updateCourseAction, uploadVideoAction } from '../../../actions'
 import Layout from '../../../components/Layout'
 import { AWS_FOLDER } from '../../../config'
 import { Loader } from '../../../components/common/Loader'
@@ -13,6 +13,7 @@ import Button from '../../../components/Button'
 import Modal from '../../../components/common/Modal'
 import Input from '../../../components/common/Input'
 import Message from '../../../components/common/Message'
+import ReactPlayer from 'react-player'
 
 const CourseDetail = ({ match }) => {
 
@@ -22,7 +23,9 @@ const CourseDetail = ({ match }) => {
         loadingCourseDetail,
         error,
         loadingUpdate,
-        errorUpdate
+        errorUpdate,
+        loadingUploadVideo,
+        errorUploadVideo,
     } = useSelector(state => state.course)
     const { user } = useSelector(state => state.auth)
 
@@ -33,7 +36,11 @@ const CourseDetail = ({ match }) => {
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
 
+    const [name, setName] = useState('')
+    const [videoFile, setVideoFile] = useState({})
+
     const [updateCourseModal, setUpdateCourseModal] = useState(false)
+    const [uploadVideoModal, setUploadVideoModal] = useState(false)
 
     const [message, setMessage] = useState('')
 
@@ -45,6 +52,22 @@ const CourseDetail = ({ match }) => {
     const handleUploadBackgroundImage = (e) => {
         setBgImage(e.target.files[0])
         setPreviewBgImage(URL.createObjectURL(e.target.files[0]))
+    }
+
+
+    const handleUploadVideo = (e) => {
+        const file = e.target.files[0]
+        setVideoFile(file)
+    }
+
+    const uploadVideoHandler = () => {
+        dispatch(uploadVideoAction({
+            body: {
+                name: name,
+                course: courseId
+            },
+            file: videoFile
+        }))
     }
 
     const handleShowUpdateCourseModal = () => {
@@ -80,6 +103,16 @@ const CourseDetail = ({ match }) => {
 
     }, [loadingUpdate, errorUpdate]);
 
+    useEffect(() => {
+        if (!loadingUploadVideo && !errorUploadVideo) {
+            setMessage('Upload video successful');
+            setTimeout(() => {
+                resetField();
+            }, 1000);
+        }
+
+    }, [loadingUploadVideo, errorUploadVideo]);
+
     const resetField = () => {
         setTitle('')
         setDescription('')
@@ -89,6 +122,9 @@ const CourseDetail = ({ match }) => {
         setToDate('')
         setUpdateCourseModal(false)
         setMessage('')
+        setName('')
+        setVideoFile({})
+        setUploadVideoModal(false)
     }
 
     useEffect(() => {
@@ -259,12 +295,70 @@ const CourseDetail = ({ match }) => {
                                     </ul>
                                     <div className="tab-content">
                                         {tab === 0 && (
-                                            <div className="tab-pane active">
-                                                <hr />
-                                                <h3>Description</h3>
-                                                <p>{currentCourse?.description}</p>
-                                                <hr />
-                                            </div>
+                                            <>
+                                                <div className="tab-pane active">
+                                                    <hr />
+                                                    <h3>Description</h3>
+                                                    <p>{currentCourse?.description}</p>
+                                                    <hr />
+                                                    <Button
+                                                        status='info'
+                                                        icon='fa fa-plus'
+                                                        onClick={() => setUploadVideoModal(true)}
+                                                    >
+                                                        Upload video
+                                                </Button>
+                                                    {
+                                                        currentCourse?.videos?.length > 0 ? currentCourse.videos.map((video, index) => (
+                                                            <Row>
+                                                                <Col lg={12} sm={4}>
+                                                                    <ReactPlayer
+                                                                        url={`${AWS_FOLDER.VIDEO}${video.file}`}
+                                                                        className='react-player'
+                                                                        controls={true}
+                                                                        width={350}
+                                                                        height={300}
+                                                                    />
+                                                                </Col>
+                                                            </Row>
+                                                        )) : <i>No video upload</i>
+                                                    }
+                                                </div>
+
+
+                                                <Modal
+                                                    modalTitle={'Upload video'}
+                                                    show={uploadVideoModal}
+                                                    handleClose={() => setUploadVideoModal(false)}
+                                                    onHide={() => setUploadVideoModal(false)}
+                                                >
+                                                    {loadingUploadVideo && <Loader />}
+                                                    {errorUploadVideo && <Message variant="danger">{errorUploadVideo}</Message>}
+                                                    {message && <Message variant="success">{message}</Message>}
+                                                    <Input
+                                                        label='Name'
+                                                        placeholder='Enter name...'
+                                                        value={name}
+                                                        onChange={(e) => setName(e.target.value)}
+                                                        important
+                                                    />
+                                                    <Input
+                                                        type='file'
+                                                        label='Choose video'
+                                                        name={videoFile}
+                                                        onChange={handleUploadVideo}
+                                                        lang="en"
+                                                        important
+                                                    />
+                                                    <Button
+                                                        status='info'
+                                                        icon='fa fa-plus'
+                                                        onClick={uploadVideoHandler}
+                                                    >
+                                                        Upload
+                                                    </Button>
+                                                </Modal>
+                                            </>
                                         )}
 
 

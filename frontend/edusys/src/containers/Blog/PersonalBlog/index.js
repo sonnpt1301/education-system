@@ -283,7 +283,7 @@ const PersonalBlog = ({ courseId }) => {
                                     </ul>
                                 </div>
                             </div>
-                        )) :
+                        )).reverse() :
                             <div style={{ textAlign: 'center', paddingBottom: '20px', paddingTop: '20px' }}>
                                 <i>No blog</i>
                             </div>

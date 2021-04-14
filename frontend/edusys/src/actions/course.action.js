@@ -100,8 +100,6 @@ export const createCourseAction = ({ body, bgImage }) => {
 }
 
 
-
-
 export const updateCourseAction = ({ id, body, bgImage }) => {
     return async dispatch => {
         try {
@@ -214,6 +212,36 @@ export const joinCourseAction = ({ body }) => {
                 type: courseConstants.JOIN_COURSE_FAILURE,
                 payload: error.response?.data?.message || error.message,
             })
+        }
+    }
+}
+
+export const uploadVideoAction = ({ body, file }) => {
+    return async dispatch => {
+        try {
+            const token = getToken()
+            dispatch({ type: courseConstants.UPLOAD_VIDEO_COURSE_REQUEST })
+
+            const payload = new FormData()
+            payload.append('file', file)
+            payload.append('name', body.name)
+            const { data: { data } } = await axios.post(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/courses/${body.course}/upload-video`, payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            console.log(data)
+            dispatch({
+                type: courseConstants.UPLOAD_VIDEO_COURSE_SUCCESS,
+                payload: data
+            })
+        } catch (error) {
+            dispatch({
+                type: courseConstants.UPLOAD_VIDEO_COURSE_FAILURE,
+                payload: error.response?.data?.message || error.message,
+            })
+
         }
     }
 }

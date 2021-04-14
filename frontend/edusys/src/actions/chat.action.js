@@ -30,8 +30,6 @@ export const getListMessageAction = () => {
 export const uploadFileAction = ({ file }) => {
     return async dispatch => {
         try {
-
-            console.log(file)
             const token = getToken()
             dispatch({ type: chatConstants.UPLOAD_FILE_REQUEST })
 

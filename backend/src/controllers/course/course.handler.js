@@ -4,7 +4,8 @@ import {
     deleteCourseService,
     listCourseService,
     updateCourseService,
-    uploadCourseBgImgService
+    uploadCourseBgImgService,
+    uploadVideoService
 } from './course.process.js'
 import { queryBuilder } from './course.validator.js'
 
@@ -46,6 +47,12 @@ export const uploadCourseBgImg = async (req, res) => {
 
     return res.status(statusCode).send({ statusCode, message, data });
 };
+
+export const uploadVideo = async (req, res) => {
+    const { statusCode, message, data } = await uploadVideoService(req.params.id, req.body, req.file, req.user)
+
+    return res.status(statusCode).send({ statusCode, message, data })
+}
 
 
 

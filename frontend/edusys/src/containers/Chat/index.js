@@ -12,6 +12,7 @@ import Modal from '../../components/common/Modal'
 import { Loader } from '../../components/common/Loader'
 import Message from '../../components/common/Message'
 import Input from '../../components/common/Input'
+import ReactPlayer from 'react-player'
 
 let socket
 let messagesEnd
@@ -30,7 +31,7 @@ const Chat = () => {
     const [showCreateNewMessage, setShowCreateNewMessage] = useState(false)
     const [error, setError] = useState('')
     const [file, setFile] = useState()
-
+    const [isNew, setIsNew] = useState(false)
 
     const handleShowBoxMessage = (index) => {
         setIndex(index)
@@ -72,6 +73,10 @@ const Chat = () => {
 
         socket.on('Output message', (data) => {
             dispatch(afterSendMessage(data))
+        })
+
+        socket.on('Output message', (data) => {
+            dispatch(getListMessageAction())
         })
 
         socket.emit('room', room);
@@ -128,7 +133,7 @@ const Chat = () => {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                         {
-                            userList?.data && userList.data.map((user, index) => (
+                            userList?.data?.length > 0 ? userList.data.map((user, index) => (
                                 <ul class="list-group" style={{ paddingTop: '5px' }}>
 
                                     <li className="d-flex justify-content-between align-items-center list-friend-css"
@@ -144,7 +149,9 @@ const Chat = () => {
                                         </div>
                                     </li>
                                 </ul>
-                            ))
+                            )) : <div style={{ textAlign: 'center' }}>
+                                <i>Not found</i>
+                            </div>
                         }
                     </Modal>
 
@@ -214,8 +221,20 @@ const Chat = () => {
                                                                 />
                                                                 {
                                                                     msg.file ?
-                                                                        <img src={`${AWS_FOLDER.IMAGE}${msg?.file}`} alt="image_upload"
-                                                                            style={{ width: '350px', height: '350px', borderRadius: 'inherit', boxShadow: 'none' }} /> :
+                                                                        (
+                                                                            (msg.file.substring(msg?.file?.length - 3) === 'MOV') ?
+                                                                                <ReactPlayer
+                                                                                    url={`${AWS_FOLDER.IMAGE}${msg?.file}`}
+                                                                                    className='react-player'
+                                                                                    controls={true}
+                                                                                    width={350}
+                                                                                    height={300}
+                                                                                /> :
+                                                                                <img src={`${AWS_FOLDER.IMAGE}${msg?.file}`} alt="image_upload"
+                                                                                    style={{ width: '350px', height: '350px', borderRadius: 'inherit', boxShadow: 'none' }} />
+
+                                                                        )
+                                                                        :
                                                                         <div className="card ml-1" style={{ borderRadius: '15px', marginBottom: '0', marginRight: '5px' }}>
                                                                             <div className="card-body" style={{ padding: '5px 20px' }}>
                                                                                 <div className="list-unstyled">
@@ -236,8 +255,20 @@ const Chat = () => {
                                                             <div className="user-profile" style={{ display: 'flex', marginTop: '10px', justifyContent: 'flex-end' }}>
                                                                 {
                                                                     msg.file ?
-                                                                        <img src={`${AWS_FOLDER.IMAGE}${msg?.file}`} alt="image_upload"
-                                                                            style={{ width: '350px', height: '350px', borderRadius: 'inherit', boxShadow: 'none' }} /> :
+                                                                        (
+                                                                            (msg.file.substring(msg?.file?.length - 3) === 'MOV') ?
+                                                                                <ReactPlayer
+                                                                                    url={`${AWS_FOLDER.IMAGE}${msg?.file}`}
+                                                                                    className='react-player'
+                                                                                    controls={true}
+                                                                                    width={350}
+                                                                                    height={300}
+                                                                                /> :
+                                                                                <img src={`${AWS_FOLDER.IMAGE}${msg?.file}`} alt="image_upload"
+                                                                                    style={{ width: '350px', height: '350px', borderRadius: 'inherit', boxShadow: 'none' }} />
+
+                                                                        )
+                                                                        :
                                                                         <div className="card ml-1" style={{ borderRadius: '15px', backgroundColor: 'rgb(0, 132, 255)', marginBottom: '0', marginRight: '5px' }}>
                                                                             <div className="card-body" style={{ padding: '5px 20px' }}>
                                                                                 <div className="list-unstyled">
@@ -276,7 +307,6 @@ const Chat = () => {
                                         type='file'
                                         name={file}
                                         onChange={handleUploadFile}
-                                        accept='image/*'
                                         lang="en"
                                         style={{ display: 'none' }}
                                     />

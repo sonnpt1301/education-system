@@ -15,7 +15,7 @@ app.set('port', process.env.PORT);
 app.all('*', allowCors);
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true}));
+app.use(express.urlencoded({ extended: true }));
 const __dirname = path.resolve()
 app.set('views', path.join(__dirname, 'views'))
 

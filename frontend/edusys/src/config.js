@@ -9,4 +9,5 @@ export const BUCKET = 'edusys-project';
 export const AWS_FOLDER = {
     IMAGE: AWS_END_POINT + BUCKET + '/image/',
     FILE: AWS_END_POINT + BUCKET + '/file/',
+    VIDEO: AWS_END_POINT + BUCKET + '/video/',
 };

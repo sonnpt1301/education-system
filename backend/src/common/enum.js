@@ -9,6 +9,7 @@ export const EDUSYS_BUCKET = 'edusys-project';
 export const AWS_FOLDER = {
     IMAGE: 'image/',
     FILE: 'file/',
+    VIDEO: 'video/',
 };
 
 export const SMTP_CONFIG = {
