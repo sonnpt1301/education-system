@@ -41,13 +41,16 @@ const Header = () => {
                         <ul class="dropdown-menu dropdown-menu-right">
                             <li class="dropdown-item user-details">
                                 <a href="javaScript:void();">
-                                    <div class="media">
-                                        <div class="avatar"><img class="align-self-start mr-3" src={`${AWS_FOLDER.IMAGE}${user?.profile?.avatar}`} alt="user avatar" /></div>
-                                        <div class="media-body">
-                                            <h6 class="mt-2 user-title">{user?.profile?.firstName + ' ' + user?.profile?.lastName}</h6>
-                                            <p class="user-subtitle">{user?.email}</p>
+                                    <NavLink to='/profile' style={{ color: 'black' }}>
+                                        <div class="media" style={{ padding: '10px' }}>
+                                            <div class="avatar"><img class="align-self-start mr-3" src={`${AWS_FOLDER.IMAGE}${user?.profile?.avatar}`} alt="user avatar" /></div>
+                                            <div class="media-body">
+                                                <h6 class="mt-2 user-title">{user?.profile?.firstName + ' ' + user?.profile?.lastName}</h6>
+                                                <p class="user-subtitle">{user?.email}</p>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </NavLink>
+
                                 </a>
                             </li>
                             <li class="dropdown-divider"></li>

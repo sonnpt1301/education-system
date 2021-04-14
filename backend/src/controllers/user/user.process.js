@@ -7,8 +7,6 @@ import { sanitizeUpdateData, sanitizeUserData } from './user.validator.js';
 import { mailer } from '../../common/mailer.js';
 import { renderFile } from 'ejs'
 
-
-
 export const loginAuthentication = async ({ email, password }) => {
     const response = {
         statusCode: 200,

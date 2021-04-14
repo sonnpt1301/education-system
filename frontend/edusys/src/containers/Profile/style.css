@@ -1,0 +1,16 @@
+  
+.container-avatar {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.icon-camera {
+    position: absolute;
+    bottom: 15px;
+    right: 50%;
+}
+
+.container-avatar>input {
+    display: none;
+}

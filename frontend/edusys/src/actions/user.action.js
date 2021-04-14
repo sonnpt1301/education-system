@@ -71,7 +71,7 @@ export const updateUserAction = ({ id, body }) => {
             })
             dispatch({
                 type: userConstants.UPDATE_USER_SUCCESS,
-                payload: data.user
+                payload: data
             })
         } catch (error) {
             dispatch({

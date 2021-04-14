@@ -13,6 +13,7 @@ import CourseDetail from './containers/Course/CourseDetail';
 import { logoutAction } from './actions';
 import About from './containers/About';
 import Chat from './containers/Chat';
+import Profile from './containers/Profile';
 
 
 
@@ -27,6 +28,7 @@ function App() {
         <Route exact path="/reset-password" component={ResetPassword} />
 
         <Route exact path="/" component={Home} />
+        <Route exact path="/profile" component={Profile} />
         <Route exact path="/course" component={Course} />
         <PrivateRoute exact path="/course-detail" component={CourseDetail} />
         <PrivateRoute exact path="/message" component={Chat} />

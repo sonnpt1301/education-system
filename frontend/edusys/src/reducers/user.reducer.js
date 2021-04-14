@@ -53,25 +53,6 @@ export default (state = initState, action) => {
                 errorCreate: action.payload
             }
             break;
-        case userConstants.UPDATE_USER_REQUEST:
-            state = {
-                ...state,
-                loadingUpdate: true
-            }
-            break;
-        case userConstants.UPDATE_USER_SUCCESS:
-            state = {
-                ...state,
-                loadingUpdate: false
-            }
-            break;
-        case userConstants.UPDATE_USER_FAILURE:
-            state = {
-                ...state,
-                errorUpdate: action.payload,
-                loadingUpdate: false
-            }
-            break;
         case userConstants.DELETE_USER_REQUEST:
             state = {
                 ...state,
