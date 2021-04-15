@@ -5,6 +5,7 @@ import categoryReducer from './category.reducer'
 import userReducer from './user.reducer'
 import blogReducer from './blog.reducer'
 import chatReducer from './chat.reducer'
+import activityReducer from './activity.reducer'
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
     category: categoryReducer,
     user: userReducer,
     blog: blogReducer,
-    chat: chatReducer
+    chat: chatReducer,
+    activity: activityReducer,
 })
 
 export default rootReducer

@@ -8,7 +8,6 @@ const HorizontalMenu = () => {
 
     const dispatch = useDispatch()
     const { categoryList } = useSelector(state => state.category)
-    const history = useHistory()
     useEffect(() => {
         dispatch(getListCategoryAction())
     }, [])
@@ -28,7 +27,7 @@ const HorizontalMenu = () => {
             <ul id="respMenu" class="horizontal-menu" style={{ display: 'flex', justifyContent: 'center' }}>
                 <li>
                     <a href="javascript:;">
-                        <i class="fa fa-dashboard" aria-hidden="true"></i>
+                        <i class="fa fa-home" aria-hidden="true"></i>
                         <span class="title">
                             <NavLink to="/">
                                 Home
@@ -40,7 +39,7 @@ const HorizontalMenu = () => {
                     <a href="javascript:;">
                         <i class="zmdi zmdi-card-travel"></i>
                         <span class="title" style={{ color: '#1d8aff' }}>Categories</span>
-                        <span class="arrow"></span>
+                        
                     </a>
                     <ul>
                         {

@@ -9,3 +9,5 @@ export * from './user.action'
 export * from './blog.action'
 
 export * from './chat.action'
+
+export * from './activity.action'

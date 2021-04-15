@@ -341,7 +341,7 @@ const CourseDetail = ({ match }) => {
                                                                         url={`${AWS_FOLDER.VIDEO}${video.file}`}
                                                                         className='react-player'
                                                                         controls={true}
-                                                                        width={500}
+                                                                        width={360}
                                                                         height={300}
                                                                         style={{ border: '1px solid #14b6ff' }}
 
@@ -403,7 +403,7 @@ const CourseDetail = ({ match }) => {
 
 
                                         {tab === 2 && (
-                                            <Activity />
+                                            <Activity _id={courseId}/>
                                         )}
 
 

@@ -11,7 +11,7 @@ const CourseSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'on process', 'accomplish', 'reject', 'cancel'],
+        enum: ['pending', 'on process', 'accomplish', 'reject'],
         default: 'pending'
     },
     bgImage: { type: String, default: 'course.jpg' },
