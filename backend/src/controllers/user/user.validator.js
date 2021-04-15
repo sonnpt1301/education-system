@@ -31,9 +31,24 @@ export const sanitizeUpdateData = (data) => {
     if (data.profile.phone) {
         result['profile.phone'] = data.profile.phone;
     }
-
     return result;
 };
+
+export const sanitizeReturnData = (data) => {
+    const result = {}
+    if (data.profile) {
+        result.profile = data.profile
+    }
+
+    if (data.email) {
+        result.email = data.email
+    }
+
+    if (data._id) {
+        result._id = data._id
+    }
+    return result
+}
 
 export const queryBuilder = (query) => {
     const result = {};

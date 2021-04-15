@@ -47,7 +47,7 @@ const Login = () => {
                 <div class="card-body">
                     <div class="card-content p-2">
                         <div class="text-center">
-                            <img src="https://edusys-project.s3-ap-southeast-1.amazonaws.com/image/logo.png" style={{ width: '110px' }} alt="logo icon" />
+                            <img src="https://edusys-project.s3-ap-southeast-1.amazonaws.com/image/logo.png" style={{ width: '200px', height: '100px' }} alt="logo icon" />
                         </div>
                         <div class="card-title text-uppercase text-center py-3">Sign In</div>
                         <form onSubmit={userLogin}>

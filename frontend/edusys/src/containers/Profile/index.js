@@ -1,31 +1,36 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { logoutAction, updateUserAction } from '../../actions'
+import { logoutAction, updateAvatarAction, updateUserAction } from '../../actions'
 import Button from '../../components/Button'
 import Input from '../../components/common/Input'
 import Layout from '../../components/Layout'
 import { AWS_FOLDER, API_CONFIG } from '../../config'
+import swal from 'sweetalert'
 import './style.css'
+import Message from '../../components/common/Message'
+import { Loader } from '../../components/common/Loader'
+
 const Profile = () => {
 
     const dispatch = useDispatch()
-    const { user, loadingUpdate } = useSelector(state => state.auth)
+    const { user, loadingUpdate, errorUpdate } = useSelector(state => state.auth)
 
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [address, setAddress] = useState('')
     const [city, setCity] = useState('')
-    const [contact, setContact] = useState('')
-    const [fileUpload, setFileUpload] = useState([])
+    const [phone, setPhone] = useState('')
+    const [fileUpload, setFileUpload] = useState({})
     const [uploadIMG, setUploadIMG] = useState(true)
     const [previewAvatar, setPreviewAvatar] = useState(null)
+    const [message, setMessage] = useState('')
 
     const handleUpdateProfile = () => {
         setFirstName(user?.profile?.firstName)
         setLastName(user?.profile?.lastName)
         setAddress(user?.profile?.address)
         setCity(user?.profile?.city)
-        setContact(user?.profile?.phone)
+        setPhone(user?.profile?.phone)
     }
 
     const updateUserProfileHandler = () => {
@@ -37,51 +42,53 @@ const Profile = () => {
                     lastName,
                     address,
                     city,
-                    contact
+                    phone
                 }
             }
         }))
     }
 
     const handleUploadFile = (e) => {
-        let file = e.target.files
-        for (let i = 0; i < file.length; i++) {
-            fileUpload.push(file[i])
-            setFileUpload(
-                fileUpload
-            )
-        }
+        const file = e.target.files[0]
+        setFileUpload(file)
         setPreviewAvatar(URL.createObjectURL(e.target.files[0]))
-        setUploadIMG(!uploadIMG)
+        setUploadIMG(false)
     }
 
-    const _uploadAvatar = () => {
-        // const params = { userId: user._id }
-        // const form = new FormData()
-        // for (let file of fileUpload) {
-        //     form.append('profilePicture', file)
-        // }
-        // swal({
-        //     title: "Are you sure?",
-        //     icon: "warning",
-        //     buttons: true,
-        //     dangerMode: true,
-        // })
-        //     .then((willChange) => {
-        //         if (willChange) {
-        //             dispatch(uploadAvatar(params, form))
-        //             setPreviewAvatar(null)
-        //             setUploadIMG(!uploadIMG)
-        //         } else {
-        //             setPreviewAvatar(null)
-        //             setUploadIMG(!uploadIMG)
-        //         }
-        //     });
-
+    const updateAvatarHandler = () => {
+        dispatch(updateAvatarAction({
+            id: user._id,
+            file: fileUpload
+        })).then(() => {
+            setPreviewAvatar(null)
+            setUploadIMG(true)
+        })
     }
+
+
+    const resetField = () => {
+        setMessage('')
+    }
+
+    useEffect(() => {
+        if (!loadingUpdate && !errorUpdate) {
+            setMessage('Update profile successful');
+            setTimeout(() => {
+                resetField();
+            }, 1000);
+        }
+
+    }, [loadingUpdate, errorUpdate]);
+
+    useEffect(() => {
+        handleUpdateProfile()
+    }, [dispatch, loadingUpdate])
+
 
     return (
         <Layout>
+            {loadingUpdate === true && <Loader />}
+            {message && <Message variant='success'>{message}</Message>}
             <div className="content-wrapper">
                 <div className="container-fluid">
                     <div className="row">
@@ -90,19 +97,14 @@ const Profile = () => {
 
                                 <div className="container-avatar" style={{ cursor: 'pointer' }}>
                                     <label for="file-input">
-                                        {
-                                            previewAvatar ?
-                                                <img className="card-img-top" alt="Card image cap"
-                                                    src={previewAvatar} /> :
-                                                <img src={`${AWS_FOLDER.IMAGE}${user?.profile?.avatar}`}
-                                                    className="card-img-top" alt="Card image cap" />
-                                        }
+                                        <img src={previewAvatar ? previewAvatar : `${AWS_FOLDER.IMAGE}${user?.profile?.avatar}`}
+                                            className="card-img-top" alt="Card image cap" />
 
                                         <i aria-hidden="true" for="input-upload-avatar" className="icon-camera fa fa-camera"></i>
                                     </label>
                                     <input id="file-input" type="file" onChange={handleUploadFile} />
                                 </div>
-                                <button className="btn btn-light waves-effect waves-light m-1" disabled={uploadIMG} style={uploadIMG ? { cursor: 'no-drop' } : null} onClick={_uploadAvatar}>Change avatar</button>
+                                <button className="btn btn-light waves-effect waves-light m-1" disabled={uploadIMG} style={uploadIMG ? { cursor: 'no-drop' } : null} onClick={updateAvatarHandler}>Change avatar</button>
                                 <div className="card-body">
                                     <div>Full Name: <h5 className="card-title">{user?.profile?.firstName + ' ' + user?.profile?.lastName}</h5></div>
                                     <div>Role: <h5 className="card-title">{(user?.profile?.role)?.toUpperCase()}</h5></div>
@@ -164,9 +166,9 @@ const Profile = () => {
                                             />
                                             <Input
                                                 label="Contact"
-                                                value={contact}
+                                                value={phone}
                                                 placeholder={'Contact'}
-                                                onChange={(e) => setContact(e.target.value)}
+                                                onChange={(e) => setPhone(e.target.value)}
                                             />
                                             <Input
                                                 label="Address"
@@ -180,9 +182,8 @@ const Profile = () => {
                                                 placeholder={'City'}
                                                 onChange={(e) => setCity(e.target.value)}
                                             />
-                                            <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label form-control-label"></label>
-                                                <div class="col-lg-9">
+                                            <div class="form-group pull-right">
+                                                <div>
                                                     <Button
                                                         status='light'
                                                     >

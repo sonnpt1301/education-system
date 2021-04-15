@@ -675,8 +675,9 @@ hr {
 }
 
 .logo-icon{
-    width: 35px;
+    width: 300px;
     margin-right: 5px;
+    margin-left: -50px;
 }
 
 .user-details{
@@ -3954,11 +3955,11 @@ table.grid td {
 }
 
 .list-group-item-action {
-    color: #7934f3;
+    color: black;
 }
 
 .list-group-item-action:hover {
-    color: #7934f3;
+    color: black;
     background-color: rgba(255, 255, 255, 0.2);
 }
 .list-group-item-action:focus {

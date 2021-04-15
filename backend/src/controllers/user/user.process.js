@@ -3,7 +3,7 @@ import { uploadAWS } from '../../common/aws.js';
 import { AWS_FOLDER, EDUSYS_BUCKET } from '../../common/enum.js';
 import { User } from '../../models/user.model.js';
 import { accessToken, resetPasswordToken } from '../../utils/index.js';
-import { sanitizeUpdateData, sanitizeUserData } from './user.validator.js';
+import { sanitizeReturnData, sanitizeUpdateData, sanitizeUserData } from './user.validator.js';
 import { mailer } from '../../common/mailer.js';
 import { renderFile } from 'ejs'
 
@@ -137,15 +137,15 @@ export const updateUserService = async ({ userId, data }) => {
 
     try {
         const updateData = sanitizeUpdateData(data);
-        const user = await User.findOneAndUpdate({ _id: userId }, updateData, { new: true });
-        if (!user) {
+        const updatedUser = await User.findOneAndUpdate({ _id: userId }, updateData, { new: true });
+        if (!updatedUser) {
             return {
                 statusCode: 404,
                 message: 'User not found',
                 data: {},
             };
         }
-
+        const user = sanitizeReturnData(updatedUser)
         response.data = user;
     } catch (err) {
         response.statusCode = 500;
@@ -200,8 +200,8 @@ export const uploadUserAvatar = async ({ userId, avatar }) => {
     };
 
     try {
-        const user = await User.findOne({ _id: userId }).select('email profile createdAt');
-        if (!user) {
+        const updatedAvatar = await User.findOne({ _id: userId }).select('email profile createdAt');
+        if (!updatedAvatar) {
             return {
                 statusCode: 404,
                 message: 'User not found',
@@ -210,10 +210,12 @@ export const uploadUserAvatar = async ({ userId, avatar }) => {
         }
 
         // avatarPath: first-lastName.hash(date).mimetype
-        user.profile.avatar = `${user.profile.firstName}-${user.profile.lastName}.${md5(Date.now())}.${avatar.originalname.split('.').pop()}`;
-        await uploadAWS(EDUSYS_BUCKET, `${AWS_FOLDER.IMAGE}${user.profile.avatar}`, avatar.buffer);
+        updatedAvatar.profile.avatar = `${updatedAvatar.profile.firstName}-${updatedAvatar.profile.lastName}.${md5(Date.now())}.${avatar.originalname.split('.').pop()}`;
+        await uploadAWS(EDUSYS_BUCKET, `${AWS_FOLDER.IMAGE}${updatedAvatar.profile.avatar}`, avatar.buffer);
 
-        response.data = await user.save();
+        await updatedAvatar.save()
+        const user = sanitizeReturnData(updatedAvatar)
+        response.data = user
     } catch (err) {
         console.log(err);
         response.statusCode = 500;

@@ -90,6 +90,7 @@ export default (state = initState, action) => {
         case userConstants.UPDATE_USER_SUCCESS:
             state = {
                 ...state,
+                user: action.payload,
                 loadingUpdate: false
             }
             break;

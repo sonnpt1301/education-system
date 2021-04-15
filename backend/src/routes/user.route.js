@@ -16,6 +16,6 @@ export default (prefix) => {
     router.put('/:id', verifyToken, userController.updateUser);
     router.delete('/:id', verifyToken, validateRole(['admin']), userController.deleteUser);
 
-    router.post('/:id/avatar', verifyToken, multer({}).single('avatar'), userController.uploadAvatar);
+    router.put('/:id/avatar', verifyToken, multer({}).single('avatar'), userController.uploadAvatar);
     router.post('/forgotPassword', userController.forgotPassword)
 };

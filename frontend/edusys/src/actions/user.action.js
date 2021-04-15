@@ -3,7 +3,7 @@ import axios from 'axios';
 import { API_CONFIG } from '../config';
 import { userConstants } from './constants';
 import qs from 'qs';
-
+import imageCompression from 'browser-image-compression';
 
 export const getListUserAction = (filter) => {
     return async dispatch => {
@@ -73,6 +73,7 @@ export const updateUserAction = ({ id, body }) => {
                 type: userConstants.UPDATE_USER_SUCCESS,
                 payload: data
             })
+            localStorage.setItem('user', JSON.stringify(data))
         } catch (error) {
             dispatch({
                 type: userConstants.UPDATE_USER_FAILURE,
@@ -82,24 +83,35 @@ export const updateUserAction = ({ id, body }) => {
     }
 }
 
-export const deleteUserAction = (id) => {
+export const updateAvatarAction = ({ id, file }) => {
     return async dispatch => {
         try {
-            dispatch({ type: userConstants.DELETE_USER_REQUEST })
             const token = getToken()
-            const { data: { data } } = await axios.delete(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/users/${id}`, {
+            dispatch({ type: userConstants.UPDATE_USER_REQUEST })
+
+            const uploadAvatar = await imageCompression(file, {
+                maxSizeMB: 0.1,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true,
+            });
+
+            const payload = new FormData();
+            payload.append('avatar', uploadAvatar);
+
+            const { data: { data } } = await axios.put(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/users/${id}/avatar`, payload, {
                 headers: {
                     'Content-type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
             })
+            localStorage.setItem('user', JSON.stringify(data))
             dispatch({
-                type: userConstants.DELETE_USER_SUCCESS,
-                payload: data.user
+                type: userConstants.UPDATE_USER_SUCCESS,
+                payload: data
             })
         } catch (error) {
             dispatch({
-                type: userConstants.DELETE_USER_FAILURE,
+                type: userConstants.UPDATE_USER_FAILURE,
                 payload: error.response?.data?.message || error.message,
             });
         }
