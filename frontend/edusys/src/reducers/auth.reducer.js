@@ -13,6 +13,7 @@ const initState = {
     loadingResetPassword: false,
     errorSendRequest: false,
     errorResetPassword: false,
+    isSent: false,
 }
 
 export default (state = initState, action) => {
@@ -53,6 +54,7 @@ export default (state = initState, action) => {
             state = {
                 ...state,
                 loadingSendRequest: false,
+                isSent: true
             }
             break;
         case authConstants.RESET_PASSWORD_FAILURE:
@@ -72,6 +74,7 @@ export default (state = initState, action) => {
             state = {
                 ...state,
                 loadingResetPassword: false,
+                errorResetPassword: null
             }
             break;
         case authConstants.CREATE_NEW_PASSWORD_FAILURE:

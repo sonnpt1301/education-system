@@ -88,7 +88,7 @@ const Login = () => {
                                 <div class="form-group col-6 text-right">
                                     <NavLink to="/reset-password">
                                         Reset Password
-                                </NavLink>
+                                    </NavLink>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-primary btn-block" onClick={() => { }}>Sign In</button>

@@ -6,12 +6,12 @@ import { Loader } from '../../components/common/Loader'
 import Message from '../../components/common/Message'
 const ResetPassword = ({ location }) => {
     const dispatch = useDispatch()
-    const { loading, error, loadingSendRequest, loadingResetPassword, errorSendRequest, errorResetPassword } = useSelector(state => state.auth)
+    const { loading, error, loadingSendRequest, loadingResetPassword, errorSendRequest, errorResetPassword, isSent } = useSelector(state => state.auth)
     const history = useHistory()
     const [email, setEmail] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const [message, setCreateMessage] = useState('')
+    const [createMessage, setCreateMessage] = useState('')
 
     useEffect(() => {
         if (!loadingSendRequest && !errorSendRequest) {
@@ -22,8 +22,18 @@ const ResetPassword = ({ location }) => {
         }
     }, [loadingSendRequest, errorSendRequest,]);
 
+    useEffect(() => {
+        if (!loadingResetPassword && !errorResetPassword) {
+            setCreateMessage('Change password successful');
+            setTimeout(() => {
+                resetField();
+            }, 1000);
+        }
+    }, [loadingResetPassword, errorResetPassword,]);
+
     const resetField = () => {
         setEmail('')
+        setCreateMessage('')
     }
 
     const resetPasswordHandler = () => {
@@ -47,31 +57,27 @@ const ResetPassword = ({ location }) => {
                     <div class="card-content p-2">
                         <div class="card-title text-uppercase pb-2">Reset Password</div>
                         <p class="pb-2">Please enter your email address. You will receive a link to create a new password via email.</p>
-                        {
-                            message ? (
-                            <form>
-                                <div class="form-group">
-                                    <label for="exampleInputEmailAddress" class="">Email Address</label>
-                                    {error && <Message variant="danger">{error}</Message>}
-                                    <div class="position-relative has-icon-right">
-                                        <input type="text" id="exampleInputEmailAddress" class="form-control input-shadow" placeholder="Email Address"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                        />
-                                        <div class="form-control-position">
-                                            <i class="icon-envelope-open"></i>
-                                        </div>
+                        <form>
+                            <div class="form-group">
+                                <label for="exampleInputEmailAddress" class="">Email Address</label>
+                                {error && <Message variant="danger">{error}</Message>}
+                                {createMessage && <Message variant="success">{createMessage}</Message>}
+                                <div class="position-relative has-icon-right">
+                                    <input type="text" id="exampleInputEmailAddress" class="form-control input-shadow" placeholder="Email Address"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                    <div class="form-control-position">
+                                        <i class="icon-envelope-open"></i>
                                     </div>
                                 </div>
-
-                                <button type="button" class="btn btn-warning btn-block mt-3" onClick={resetPasswordHandler}>Reset Password</button>
-                            </form>
-                        ) : <Message variant='success'>{message}</Message>
-                        }
+                            </div>
+                            <button type="button" class="btn btn-warning btn-block mt-3" onClick={resetPasswordHandler}>Reset Password</button>
+                        </form>
                     </div>
                 </div>
                 <div class="card-footer text-center py-3">
-                    <p class="text-dark mb-0">Return to the <NavLink to="/login">Log in</NavLink></p>
+                    <p class="text-dark mb-0">Return to the <NavLink style={{ color: 'green' }} to="/login">Log in</NavLink></p>
                 </div>
             </div>
         )
@@ -84,6 +90,7 @@ const ResetPassword = ({ location }) => {
                     <div class="card-content p-2">
                         <div class="card-title text-uppercase pb-2">Reset Password</div>
                         <p class="pb-2">Please enter your email address. You will receive a link to create a new password via email.</p>
+                        {errorResetPassword && <Message variant="danger">{errorResetPassword}</Message>}
                         <form>
                             <div class="form-group">
                                 <label for="exampleInputEmailAddress" class="">New Password</label>
