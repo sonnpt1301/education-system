@@ -1,4 +1,12 @@
-import { getDetailActivityService, getListActivitiesService, createActivityService, uploadFileService, downloadFileService } from './activity.process.js'
+import {
+    getDetailActivityService,
+    getListActivitiesService,
+    createActivityService,
+    uploadFileService,
+    downloadFileService,
+    gradeActivityService
+} from './activity.process.js'
+import { queryBuilder } from './activity.validator.js'
 
 
 export const getDetailActivity = async (req, res) => {
@@ -41,4 +49,10 @@ export const downloadFile = async (req, res) => {
     });
 
     return res.status(statusCode).send(data);
+}
+
+export const gradeActivity = async (req, res) => {
+    const { statusCode, message, data } = await gradeActivityService(req.params.id, req.params.fileId, req.body);
+
+    return res.status(statusCode).send({ statusCode, message, data });
 }

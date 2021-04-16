@@ -14,6 +14,11 @@ const ActivitySchema = new mongoose.Schema({
         createdBy: {
             type: mongoose.Schema.Types.ObjectId, ref: 'users',
         },
+        grade: {
+            type: String,
+            enum: ['Pending', 'Prefer', 'Pass', 'Merit', 'Distinction'],
+            default: 'Pending'
+        }
     }],
     fromDate: {
         type: Date,

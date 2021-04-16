@@ -51,8 +51,14 @@ const Profile = () => {
     const handleUploadFile = (e) => {
         const file = e.target.files[0]
         setFileUpload(file)
-        setPreviewAvatar(URL.createObjectURL(e.target.files[0]))
+        setPreviewAvatar(URL.createObjectURL(e?.target?.files[0]))
         setUploadIMG(false)
+    }
+
+    const handleCancelUploadAvatar = () => {
+        setPreviewAvatar(null)
+        setUploadIMG(true)
+        setFileUpload({})
     }
 
     const updateAvatarHandler = () => {
@@ -94,7 +100,6 @@ const Profile = () => {
                     <div className="row">
                         <div class="col-lg-4">
                             <div class="card">
-
                                 <div className="container-avatar" style={{ cursor: 'pointer' }}>
                                     <label for="file-input">
                                         <img src={previewAvatar ? previewAvatar : `${AWS_FOLDER.IMAGE}${user?.profile?.avatar}`}
@@ -104,7 +109,17 @@ const Profile = () => {
                                     </label>
                                     <input id="file-input" type="file" onChange={handleUploadFile} />
                                 </div>
-                                <button className="btn btn-light waves-effect waves-light m-1" disabled={uploadIMG} style={uploadIMG ? { cursor: 'no-drop' } : null} onClick={updateAvatarHandler}>Change avatar</button>
+                                <button className="btn btn-info waves-effect waves-info m-1" disabled={uploadIMG} style={uploadIMG ? { cursor: 'no-drop' } : null} onClick={updateAvatarHandler}>Change avatar</button>
+                                {
+                                    !uploadIMG && (
+                                        <Button
+                                            status='light'
+                                            onClick={handleCancelUploadAvatar}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    )
+                                }
                                 <div className="card-body">
                                     <div>Full Name: <h5 className="card-title">{user?.profile?.firstName + ' ' + user?.profile?.lastName}</h5></div>
                                     <div>Role: <h5 className="card-title">{(user?.profile?.role)?.toUpperCase()}</h5></div>
@@ -186,6 +201,7 @@ const Profile = () => {
                                                 <div>
                                                     <Button
                                                         status='light'
+                                                        type='reset'
                                                     >
                                                         Cancel
                                                     </Button>

@@ -2,6 +2,7 @@ import { getToken } from '../utils'
 import { activityConstants } from './constants'
 import axios from 'axios';
 import { API_CONFIG } from '../config';
+import qs from 'qs';
 
 
 export const getDetailActivityAction = ({ id }) => {
@@ -15,7 +16,6 @@ export const getDetailActivityAction = ({ id }) => {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            console.log(data)
             dispatch({
                 type: activityConstants.GET_DETAIL_ACTIVITY_SUCCESS,
                 payload: data
@@ -34,7 +34,13 @@ export const getListActivityAction = ({ id }) => {
         try {
             const token = getToken()
             dispatch({ type: activityConstants.GET_LIST_ACTIVITY_REQUEST })
-            const { data: { data } } = await axios.get(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/activities/${id}`, {
+            // const query = qs.stringify(filter)
+            // console.log(filter)
+            let endpoint = `${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/activities/${id}`
+            // if (query) {
+            //     endpoint += `?${query}`
+            // }
+            const { data: { data } } = await axios.get(endpoint, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -129,6 +135,30 @@ export const downloadFileAction = ({ fileId, fileName, activityId }) => {
             link.parentNode.removeChild(link);
         } catch (error) {
             console.log(error.response?.data?.message || error.message);
+        }
+    }
+}
+
+export const gradeActivityAction = ({ activityId, fileId, body }) => {
+    return async dispatch => {
+        try {
+            const token = getToken()
+            dispatch({ type: activityConstants.GRADE_ACTIVITY_REQUEST })
+            const { data: { data } } = await axios.put(`${API_CONFIG.END_POINT}${API_CONFIG.PREFIX}/activities/${activityId}/files/${fileId}/grade`, body, {
+                headers: {
+                    'Content-type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            dispatch({
+                type: activityConstants.GRADE_ACTIVITY_SUCCESS,
+                payload: data,
+            })
+        } catch (error) {
+            dispatch({
+                type: activityConstants.GRADE_ACTIVITY_FAILURE,
+                payload: error.response?.data?.message || error.message,
+            })
         }
     }
 }

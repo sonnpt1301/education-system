@@ -229,14 +229,18 @@ const CourseDetail = ({ match }) => {
                 <div className="container-fluid">
                     <Row>
                         <Col>
-                            <div className="row pt-2 pb-2">
-                                <div className="col-sm-9">
-                                    <h4 className="page-title">Course Detail</h4>
-                                    <ol className="breadcrumb">
-                                        <li className="breadcrumb-item"><a href="javaScript:void();">Categories</a></li>
-                                        <li className="breadcrumb-item"><a href="javaScript:void();">{currentCourse?.category?.name}</a></li>
-                                        <li className="breadcrumb-item active" aria-current="page">{currentCourse?.title}</li>
-                                    </ol>
+                            <div className='card' style={{ marginBottom: '5px' }}>
+                                <div className="card-body">
+                                    <div className="row pt-2 pb-2">
+                                        <div className="col-sm-9">
+                                            <h4 className="page-title">Course Detail</h4>
+                                            <ol className="breadcrumb">
+                                                <li className="breadcrumb-item"><a href="javaScript:void();">Categories</a></li>
+                                                <li className="breadcrumb-item"><a href="javaScript:void();">{currentCourse?.category?.name}</a></li>
+                                                <li className="breadcrumb-item active" aria-current="page">{currentCourse?.title}</li>
+                                            </ol>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="card" style={{ marginBottom: '5px' }}>
@@ -326,7 +330,7 @@ const CourseDetail = ({ match }) => {
                                                         user?._id === currentCourse?.createdBy?._id && (
                                                             <Button
                                                                 status='info'
-                                                                icon='fa fa-plus'
+                                                                icon='fa fa-upload'
                                                                 onClick={() => setUploadVideoModal(true)}
                                                             >
                                                                 Upload video
@@ -343,10 +347,8 @@ const CourseDetail = ({ match }) => {
                                                                         controls={true}
                                                                         width={360}
                                                                         height={300}
-                                                                        style={{ border: '1px solid #14b6ff' }}
-
                                                                     />
-                                                                    <h4>{video.name}</h4>
+                                                                    <h5>{video.name}</h5>
                                                                 </div>
                                                             )) : <div>
                                                                 <i>No video upload</i>
@@ -381,7 +383,8 @@ const CourseDetail = ({ match }) => {
                                                     />
                                                     <Button
                                                         status='info'
-                                                        icon='fa fa-plus'
+                                                        icon='fa fa-upload'
+                                                        long
                                                         onClick={uploadVideoHandler}
                                                     >
                                                         Upload
@@ -403,7 +406,7 @@ const CourseDetail = ({ match }) => {
 
 
                                         {tab === 2 && (
-                                            <Activity _id={courseId}/>
+                                            <Activity _id={courseId} />
                                         )}
 
 

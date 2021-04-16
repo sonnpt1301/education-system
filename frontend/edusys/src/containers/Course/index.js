@@ -286,90 +286,92 @@ const Course = ({ location }) => {
             {loading && <Loader />}
             <div class="content-wrapper">
                 <div class="container-fluid">
-                    <h4>Courses</h4>
-                    <div class="row">
-                        <div class="col-10">
+                    <div className='card'>
+                        <div className='card-body'>
+                            <h4>Courses</h4>
+                            <div class="row">
+                                <div class="col-10">
+                                    {
+                                        user.profile.role === 'tutors' && (
+                                            <Button
+                                                status='info'
+                                                icon='fa fa-plus-circle'
+                                                onClick={() => setCreateCourseModal(true)}
+                                            >
+                                                New Course
+                                            </Button>
+                                        )
+                                    }
+                                </div>
+                                <div class="col-2" style={{ paddingLeft: '10px' }}>
+                                    Choose courses
+                            <label>
+                                        <select name="default-datatable_length" aria-controls="default-datatable" class="form-control form-control-sm"
+                                            value={filter} onChange={(e) => setFilter(e.target.value)}
+                                        >
+                                            <option key="" value={''}>All</option>
+                                            <option key="on process" value={'on process'}>On process</option>
+                                            <option key="accomplish" value={'accomplish'}>Accomplish</option>
+                                        </select>
+                                    </label>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                {
+                                    courseList?.data?.length > 0 ? courseList.data.map(course => (
+                                        <div class="col-12 col-lg-6 card-zoom">
+                                            <Card
+                                                title={course.title}
+                                                avatar={`${AWS_FOLDER.IMAGE}${course.createdBy.profile.avatar}`}
+                                                createdBy={course.createdBy.profile.firstName + ' ' + course.createdBy.profile.lastName}
+                                                status={(course.status === 'on process' && 'success') || (course.status === 'accomplish' && 'info')}
+                                                children={(course.status === 'on process' && 'On process') || (course.status === 'accomplish' && 'Accomplish')}
+                                                state={course._id}
+                                                totalUser={course.totalUser}
+                                                courseImg={`${AWS_FOLDER.IMAGE}${course.bgImage}`}
+                                            />
+                                        </div>
+                                    )) : <div className='row'>No data</div>
+                                }
+                            </div>
                             {
-                                user.profile.role === 'tutors' && (
-                                    <Button
-                                        status='info'
-                                        icon='fa fa-plus-circle'
-                                        onClick={() => setCreateCourseModal(true)}
-                                    >
-                                        New Course
-                                    </Button>
+                                courseList?.data?.length > 0 && (
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-5">
+
+                                            <div class="dataTables_info" id="default-datatable_info" role="status" aria-live="polite">
+                                                Showing {limit} of {total} courses
+                                    </div>
+
+                                        </div>
+                                        <div class="col-sm-12 col-md-7">
+                                            <ReactPaginate
+                                                previousLabel={'< Previous'}
+                                                nextLabel={'Next >'}
+                                                breakLabel={'...'}
+                                                breakClassName={'page-item'}
+                                                breakLinkClassName={'page-link'}
+                                                pageCount={Math.ceil(total / limit)}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={2}
+                                                onPageChange={handlePageChange}
+                                                containerClassName={'pagination'}
+                                                subContainerClassName={'page-item'}
+                                                activeClassName={'page-item active'}
+                                                nextClassName={'page-item'}
+                                                nextLinkClassName={'page-link'}
+                                                previousClassName={'page-item'}
+                                                previousLinkClassName={'page-link'}
+                                                pageClassNam={'page-item'}
+                                                pageLinkClassName={'page-link'}
+                                            />
+                                        </div>
+                                    </div>
                                 )
                             }
                         </div>
-                        <div class="col-2" style={{ paddingLeft: '10px' }}>
-                            Choose courses
-                            <label>
-                                <select name="default-datatable_length" aria-controls="default-datatable" class="form-control form-control-sm"
-                                    value={filter} onChange={(e) => setFilter(e.target.value)}
-                                >
-                                    <option key="" value={''}>All</option>
-                                    <option key="on process" value={'on process'}>On process</option>
-                                    <option key="accomplish" value={'accomplish'}>Accomplish</option>
-                                </select>
-                            </label>
-
-                        </div>
                     </div>
-                    <div class="row">
-                        {
-                            courseList?.data?.length > 0 ? courseList.data.map(course => (
-                                <div class="col-12 col-lg-4 card-zoom">
-                                    <Card
-                                        title={course.title}
-                                        description={course.description}
-                                        avatar={`${AWS_FOLDER.IMAGE}${course.createdBy.profile.avatar}`}
-                                        createdBy={course.createdBy.profile.firstName + ' ' + course.createdBy.profile.lastName}
-                                        status={(course.status === 'on process' && 'success') || (course.status === 'accomplish' && 'info')}
-                                        children={(course.status === 'on process' && 'On process') || (course.status === 'accomplish' && 'Accomplish')}
-                                        state={course._id}
-                                        totalUser={course.totalUser}
-                                        courseImg={`${AWS_FOLDER.IMAGE}${course.bgImage}`}
-                                    />
-                                </div>
-                            )) : <div className='row'>No data</div>
-                        }
-                    </div>
-                    {
-                        courseList?.data?.length > 0 && (
-                            <div class="row">
-                                <div class="col-sm-12 col-md-5">
-
-                                    <div class="dataTables_info" id="default-datatable_info" role="status" aria-live="polite">
-                                        Showing {limit} of {total} courses
-                                    </div>
-
-                                </div>
-                                <div class="col-sm-12 col-md-7">
-                                    <ReactPaginate
-                                        previousLabel={'< Previous'}
-                                        nextLabel={'Next >'}
-                                        breakLabel={'...'}
-                                        breakClassName={'page-item'}
-                                        breakLinkClassName={'page-link'}
-                                        pageCount={Math.ceil(total / limit)}
-                                        marginPagesDisplayed={2}
-                                        pageRangeDisplayed={2}
-                                        onPageChange={handlePageChange}
-                                        containerClassName={'pagination'}
-                                        subContainerClassName={'page-item'}
-                                        activeClassName={'page-item active'}
-                                        nextClassName={'page-item'}
-                                        nextLinkClassName={'page-link'}
-                                        previousClassName={'page-item'}
-                                        previousLinkClassName={'page-link'}
-                                        pageClassNam={'page-item'}
-                                        pageLinkClassName={'page-link'}
-                                    />
-                                </div>
-                            </div>
-                        )
-                    }
-
                 </div>
             </div>
         </Layout>

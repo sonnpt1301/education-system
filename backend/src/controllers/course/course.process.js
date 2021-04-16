@@ -211,6 +211,17 @@ export const updateCourseService = async (courseId, data, currentUser) => {
             { new: true })
             .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
             .populate({ path: 'category', select: 'name' })
+
+        const videos = await Video.find({ course: course._id })
+            .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
+            .lean()
+
+        // List user in the course
+        const listUserInCourse = await UserCourse.find({ course: course._id })
+            .populate({ path: 'user', select: 'email profile.firstName profile.lastName profile.avatar' })
+
+        const totalUserInCourse = await UserCourse.countDocuments({ course: course._id })
+
         if (!course) {
             return {
                 statusCode: 404,
@@ -238,7 +249,7 @@ export const updateCourseService = async (courseId, data, currentUser) => {
             });
         }
 
-        response.data = course
+        response.data = { ...course, videos, listUserInCourse, totalUserInCourse }
     } catch (err) {
         response.statusCode = 500;
         response.message = err.message;

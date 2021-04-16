@@ -25,7 +25,7 @@ export const getDetailActivityService = async (activityId) => {
         response.data = await activity
             .populate({ path: 'course', select: 'title' })
             .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
-            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName avatar' })
+            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
             .execPopulate()
     } catch (err) {
         response.statusCode = 500
@@ -44,7 +44,7 @@ export const getListActivitiesService = async (courseId) => {
         const activities = await Activity.find({ course: courseId })
             .populate({ path: 'course', select: 'title' })
             .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
-            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName avatar' })
+            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
 
         response.data = activities
     } catch (err) {
@@ -82,7 +82,7 @@ export const createActivityService = async (courseId, data, currentUser) => {
         response.data = await activity
             .populate({ path: 'course', select: 'title' })
             .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
-            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName avatar' })
+            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
             .execPopulate()
 
     } catch (err) {
@@ -126,7 +126,7 @@ export const uploadFileService = async (activityId, files, currentUser) => {
         const data = await Activity.findOne({ _id: activityId })
             .populate({ path: 'course', select: 'title' })
             .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
-            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName avatar' })
+            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
 
         response.data = data
     } catch (err) {
@@ -177,6 +177,33 @@ export const downloadFileService = async (activityId, fileId) => {
 
         response.message = file[0].files.fileName;
         response.data = zipFile(file[0].files.fileName, downloadFile.Body);
+
+    } catch (err) {
+        response.statusCode = 500;
+        response.message = err.message;
+    }
+    return response
+}
+
+export const gradeActivityService = async (activityId, fileId, body) => {
+    const response = {
+        statusCode: 200,
+        message: 'Grade activity successful',
+        data: {}
+    }
+    try {
+        await Activity.updateOne({
+            _id: activityId, "files._id": fileId
+        },
+            { $set: { "files.$.grade": body.grade } }
+        )
+
+        const data = await Activity.findOne({ _id: activityId })
+            .populate({ path: 'course', select: 'title' })
+            .populate({ path: 'createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
+            .populate({ path: 'files.createdBy', select: 'email profile.firstName profile.lastName profile.avatar' })
+
+        response.data = data
 
     } catch (err) {
         response.statusCode = 500;

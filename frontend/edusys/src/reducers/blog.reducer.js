@@ -88,6 +88,7 @@ export default (state = initState, action) => {
         case blogConstants.UPDATE_BLOG_SUCCESS:
             state = {
                 ...state,
+                blogDetail: action.payload,
                 loadingUpdate: false,
                 errorUpdate: null
             }

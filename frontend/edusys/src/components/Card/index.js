@@ -15,11 +15,12 @@ const Card = ({ title, description, avatar, createdBy, children, status, state, 
         }}
             className="waves-effect">
             <div class="card" style={{ cursor: 'pointer' }}>
-                <img src={courseImg} style={{ height: '350px'}} class="card-img-top" alt="Card image cap" />
+                <img src={courseImg} style={{ height: '350px', width: '100%' }} class="card-img-top" alt="Card image cap" />
                 <div class="card-body">
-                    <h4 class="card-title">{title}
+                    <h4 class="card-title">{title}</h4>
+                    <div>
                         <Badge status={status}>{children}</Badge>
-                    </h4>
+                    </div>
                     <h6 className='card-description-limit'>{description}</h6>
                     <hr />
                     <div class="user-details">

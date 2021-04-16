@@ -94,6 +94,7 @@ export default (state = initState, action) => {
         case courseConstants.UPDATE_COURSE_SUCCESS:
             state = {
                 ...state,
+                courseDetail: action.payload,
                 loadingUpdate: false,
                 errorUpdate: null
             }

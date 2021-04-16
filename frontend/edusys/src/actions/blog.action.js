@@ -170,6 +170,7 @@ export const updateBlogStatusAction = ({ id, body, bgImage, files }) => {
                 type: blogConstants.UPDATE_BLOG_SUCCESS,
                 payload: data
             });
+            console.log(data)
         } catch (error) {
             dispatch({
                 type: blogConstants.UPDATE_BLOG_FAILURE,

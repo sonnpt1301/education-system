@@ -127,24 +127,22 @@ const Category = () => {
                 {loadingCreate && <Loader />}
                 {errorCreate && <Message variant="danger">{errorCreate}</Message>}
                 {createMessage && <Message variant="success">{createMessage}</Message>}
-                <Row>
-                    <Col sm={6}>
-                        <Input
-                            label="Name"
-                            placeholder={'Enter name'}
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            important
-                        />
-                    </Col>
-                </Row>
+                <Input
+                    label="Name"
+                    placeholder={'Enter name'}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    important
+                />
 
-                <div className="form-group">
-                    <button type="submit" className="btn btn-light px-5" onClick={createCategoryHandler}
-                    ><i className="icon-lock"></i>
+                <Button
+                    status='info'
+                    icon='fa fa-plus-circle'
+                    onClick={createCategoryHandler}
+                    long
+                >
                     Create
-                    </button>
-                </div>
+                </Button>
             </Modal>
 
 
@@ -157,23 +155,21 @@ const Category = () => {
                 {loadingUpdate && <Loader />}
                 {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
                 {createMessage && <Message variant="success">{createMessage}</Message>}
-                <Row>
-                    <Col sm={6}>
-                        <Input
-                            label="Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            important
-                        />
-                    </Col>
-                </Row>
+                <Input
+                    label="Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    important
+                />
 
-                <div className="form-group">
-                    <button type="submit" className="btn btn-light px-5" onClick={updateCategoryHandler}
-                    ><i className="icon-lock"></i>
+                <Button
+                    status='info'
+                    icon='fa fa-edit'
+                    onClick={updateCategoryHandler}
+                    long
+                >
                     Update
-                    </button>
-                </div>
+                </Button>
             </Modal>
 
             <Modal
@@ -204,7 +200,13 @@ const Category = () => {
                     </div>
                     <div class="row" >
                         <div class="col-lg-12">
-                            <button type="button" className="btn btn-light waves-effect waves-light m-1" onClick={handleShowCreateModal}>Create Category</button>
+                            <Button
+                                icon='fa fa-plus-circle'
+                                status='info'
+                                onClick={handleShowCreateModal}
+                            >
+                                New Category
+                            </Button>
                             <div class="card">
                                 <div class="card-header"><i class="zmdi zmdi-view-dashboard"></i> Total Categories: <CountUp end={categoryList.total} /></div>
                                 <div class="card-body">

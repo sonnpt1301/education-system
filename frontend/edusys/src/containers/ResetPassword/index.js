@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { createNewPasswordAction, resetPasswordAction } from '../../actions/auth.action'
 import { Loader } from '../../components/common/Loader'
@@ -7,7 +7,7 @@ import Message from '../../components/common/Message'
 const ResetPassword = ({ location }) => {
     const dispatch = useDispatch()
     const { loading, error, loadingSendRequest, loadingResetPassword, errorSendRequest, errorResetPassword } = useSelector(state => state.auth)
-
+    const history = useHistory()
     const [email, setEmail] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -47,39 +47,27 @@ const ResetPassword = ({ location }) => {
                     <div class="card-content p-2">
                         <div class="card-title text-uppercase pb-2">Reset Password</div>
                         <p class="pb-2">Please enter your email address. You will receive a link to create a new password via email.</p>
-                        <form>
-                            <div class="form-group">
-                                <label for="exampleInputEmailAddress" class="">Email Address</label>
-                                {error && <Message variant="danger">{error}</Message>}
-                                <div class="position-relative has-icon-right">
-                                    <input type="text" id="exampleInputEmailAddress" class="form-control input-shadow" placeholder="Email Address"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                    />
-                                    <div class="form-control-position">
-                                        <i class="icon-envelope-open"></i>
+                        {
+                            message ? (
+                            <form>
+                                <div class="form-group">
+                                    <label for="exampleInputEmailAddress" class="">Email Address</label>
+                                    {error && <Message variant="danger">{error}</Message>}
+                                    <div class="position-relative has-icon-right">
+                                        <input type="text" id="exampleInputEmailAddress" class="form-control input-shadow" placeholder="Email Address"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+                                        <div class="form-control-position">
+                                            <i class="icon-envelope-open"></i>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <button type="button" class="btn btn-warning btn-block mt-3" onClick={resetPasswordHandler}>Reset Password</button>
-                        </form>
-                    </div>
-                </div>
-                <div class="card-footer text-center py-3">
-                    <p class="text-dark mb-0">Return to the <NavLink to="/login">Log in</NavLink></p>
-                </div>
-            </div>
-        )
-    }
-
-    const afterSendResetPasswordComponent = () => {
-        return (
-            <div class="card card-authentication1 mx-auto my-5">
-                <div class="card-body">
-                    <div class="card-content p-2">
-                        <div class="card-title text-uppercase pb-2">Reset Password</div>
-                        <p class="pb-2">Please check your email address.</p>
+                                <button type="button" class="btn btn-warning btn-block mt-3" onClick={resetPasswordHandler}>Reset Password</button>
+                            </form>
+                        ) : <Message variant='success'>{message}</Message>
+                        }
                     </div>
                 </div>
                 <div class="card-footer text-center py-3">
@@ -136,7 +124,6 @@ const ResetPassword = ({ location }) => {
     return (
         <>
             { loadingSendRequest && <Loader />}
-            {loadingSendRequest && afterSendResetPasswordComponent()}
             {location.search ? createNewPasswordComponent() : resetPasswordComponent()}
         </>
     )

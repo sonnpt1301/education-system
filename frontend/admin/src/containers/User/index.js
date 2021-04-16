@@ -34,10 +34,14 @@ const User = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
 
-    const handleCloseCreateModal = () => setShowCreateModal(false)
+    const handleCloseCreateModal = () => {
+        resetField()
+    }
     const handleShowCreateModal = () => setShowCreateModal(true)
 
-    const handleCloseUpdateModal = () => setShowUpdateModal(false)
+    const handleCloseUpdateModal = () => {
+        resetField()
+    }
 
     const handleCloseDeleteModal = () => setShowDeleteModal(false)
 
@@ -282,12 +286,14 @@ const User = () => {
                     </Col>
                 </Row>
 
-                <div className="form-group">
-                    <button type="submit" className="btn btn-light px-5" onClick={createUserHandler}
-                    ><i className="icon-lock"></i>
+                <Button
+                    status='info'
+                    icon='fa fa-plus-circle'
+                    long
+                    onClick={createUserHandler}
+                >
                     Create
-                    </button>
-                </div>
+                </Button>
             </Modal>
 
 
@@ -387,12 +393,14 @@ const User = () => {
                     </Col>
                 </Row>
 
-                <div className="form-group">
-                    <button type="submit" className="btn btn-light px-5" onClick={updateUserHandler}
-                    ><i className="icon-lock"></i>
+                <Button
+                    status='info'
+                    icon='fa fa-edit'
+                    onClick={updateUserHandler}
+                    long
+                >
                     Update
-                    </button>
-                </div>
+                </Button>
             </Modal>
 
             <Modal
@@ -418,14 +426,20 @@ const User = () => {
                 <div class="container-fluid">
                     <div class="row pt-2 pb-2">
                         <div class="col-sm-9">
-                            <h4 class="page-title">User</h4>
+                            <h4 class="page-title">Users</h4>
                         </div>
                     </div>
                     <div class="row" >
                         <div class="col-lg-12">
-                            <button type="button" className="btn btn-light waves-effect waves-light m-1" onClick={handleShowCreateModal}>Create User</button>
+                            <Button
+                                status='info'
+                                icon='fa fa-plus-circle'
+                                onClick={handleShowCreateModal}
+                            >
+                                New User
+                            </Button>
                             <div class="card">
-                                <div class="card-header"><i class="fa fa-user-circle"></i> Total Users: <CountUp end={userList.total} /></div>
+                                <div class="card-header"><i class="fa fa-user-circle"></i> Total Users: {userList.total ? <CountUp end={userList.total} /> : '0'}</div>
                                 <div class="card-body">
                                     <div class="table-responsive">
                                         <div class="row">

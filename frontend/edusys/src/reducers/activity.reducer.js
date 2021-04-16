@@ -11,6 +11,8 @@ const initState = {
     errorDetail: null,
     loadingUpload: false,
     errorUpload: null,
+    loadingGrade: false,
+    errorGrade: null
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -77,6 +79,27 @@ export default (state = initState, action) => {
                 ...state,
                 loadingCreate: false,
                 errorCreate: action.payload,
+            }
+            break;
+        case activityConstants.GRADE_ACTIVITY_REQUEST:
+            state = {
+                ...state,
+                loadingGrade: true
+            }
+            break;
+        case activityConstants.GRADE_ACTIVITY_SUCCESS:
+            state = {
+                ...state,
+                activityDetail: action.payload,
+                loadingGrade: false,
+                errorGrade: null
+            }
+            break;
+        case activityConstants.GRADE_ACTIVITY_FAILURE:
+            state = {
+                ...state,
+                loadingGrade: false,
+                errorGrade: action.payload,
             }
             break;
         case activityConstants.UPLOAD_FILE_ACTIVITY_REQUEST:

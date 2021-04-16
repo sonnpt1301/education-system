@@ -15,4 +15,5 @@ export default (prefix) => {
     router.post('/:id/upload-file', multer({}).array('files'), activityController.uploadFile)
     router.get('/:id/activity-detail', activityController.getDetailActivity)
     router.get('/:id/files/:fileId', activityController.downloadFile);
+    router.put('/:id/files/:fileId/grade', validateRole(['tutors']), activityController.gradeActivity);
 };

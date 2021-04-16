@@ -38,7 +38,7 @@ const HorizontalMenu = () => {
                 <li>
                     <a href="javascript:;">
                         <i class="zmdi zmdi-card-travel"></i>
-                        <span class="title" style={{ color: '#1d8aff' }}>Categories</span>
+                        <span class="title" style={{ color: 'black' }}>Categories</span>
                         
                     </a>
                     <ul>

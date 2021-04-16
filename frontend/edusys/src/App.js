@@ -27,12 +27,12 @@ function App() {
         <Route exact path="/login" component={Login} />
         <Route exact path="/reset-password" component={ResetPassword} />
 
-        <Route exact path="/" component={Home} />
-        <Route exact path="/profile" component={Profile} />
-        <Route exact path="/course" component={Course} />
+        <PrivateRoute exact path="/" component={Home} />
+        <PrivateRoute exact path="/profile" component={Profile} />
+        <PrivateRoute exact path="/course" component={Course} />
         <PrivateRoute exact path="/course-detail" component={CourseDetail} />
         <PrivateRoute exact path="/message" component={Chat} />
-        <Route exact path="/about" component={About} />
+        <PrivateRoute exact path="/about" component={About} />
         <Route path="*" component={() => "404 NOT FOUND"} />
       </Switch>
     </Router>
