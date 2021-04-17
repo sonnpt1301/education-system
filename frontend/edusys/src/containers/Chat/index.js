@@ -202,8 +202,8 @@ const Chat = () => {
                                         {/* <img src={''} className="img-circle user-profile" alt="user avatar" /> */}
                                         <span><div className="mt-0 mb-1 ml-1">{
                                             messages[index]?.sender?._id !== user._id ?
-                                                messages[index]?.sender?.profile?.firstName + ' ' + messages[index]?.sender?.profile?.lastName :
-                                                messages[index]?.receiver?.profile?.firstName + ' ' + messages[index]?.receiver?.profile?.lastName
+                                                (messages[index]?.sender?.profile?.firstName || '') + ' ' + (messages[index]?.sender?.profile?.lastName || '') :
+                                                (messages[index]?.receiver?.profile?.firstName || '') + ' ' + (messages[index]?.receiver?.profile?.lastName || '')
                                         }</div></span>
                                     </div>
                                 </div>

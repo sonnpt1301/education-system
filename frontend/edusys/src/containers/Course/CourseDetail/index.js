@@ -237,7 +237,7 @@ const CourseDetail = ({ match }) => {
                                             <ol className="breadcrumb">
                                                 <li className="breadcrumb-item"><a href="javaScript:void();">Categories</a></li>
                                                 <li className="breadcrumb-item"><a href="javaScript:void();">{currentCourse?.category?.name}</a></li>
-                                                <li className="breadcrumb-item active" aria-current="page">{currentCourse?.title}</li>
+                                                <li className="breadcrumb-item active" aria-current="page">{(currentCourse?.title || '')}</li>
                                             </ol>
                                         </div>
                                     </div>
@@ -263,12 +263,12 @@ const CourseDetail = ({ match }) => {
                                         <div className="user-details">
                                             <div className="media align-items-center">
                                                 <div className="avatar">
-                                                    <img className="side-user-img" src={`${AWS_FOLDER.IMAGE}${currentCourse?.createdBy?.profile?.avatar}`} alt="user avatar" style={{ marginRight: '5px' }} />
+                                                    <img className="side-user-img" src={`${AWS_FOLDER.IMAGE}${currentCourse?.createdBy?.profile?.avatar}`} alt="user-avatar" style={{ marginRight: '5px' }} />
                                                 </div>
                                                 <div className="media-body">
                                                     <h6 className="side-user-name">
                                                         {
-                                                            currentCourse?.createdBy?.profile?.firstName + ' ' + currentCourse?.createdBy?.profile?.lastName
+                                                            (currentCourse?.createdBy?.profile?.firstName || '') + ' ' + (currentCourse?.createdBy?.profile?.lastName || '')
                                                         }
                                                     </h6>
                                                 </div>
