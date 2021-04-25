@@ -75,6 +75,7 @@ export default (state = initState, action) => {
             state = {
                 ...state,
                 loadingCreate: false,
+                courseDetail: action.payload,
                 errorCreate: null
             }
             break;

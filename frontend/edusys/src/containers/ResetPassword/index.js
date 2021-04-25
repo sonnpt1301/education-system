@@ -15,10 +15,10 @@ const ResetPassword = ({ location }) => {
 
     useEffect(() => {
         if (!loadingSendRequest && !errorSendRequest) {
-            setCreateMessage('Send email successful');
+            setCreateMessage('An email with a reset password link has been sent to your email!');
             setTimeout(() => {
                 resetField();
-            }, 1000);
+            }, 3000);
         }
     }, [loadingSendRequest, errorSendRequest,]);
 

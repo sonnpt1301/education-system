@@ -46,6 +46,8 @@ export const requestToJoinCourseService = async (userId, courseId) => {
     return response
 }
 
+
+
 export const joinCourseService = async (userId, courseId, secretKey) => {
     const response = {
         statusCode: 200,

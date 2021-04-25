@@ -20,6 +20,7 @@ const Course = ({ location }) => {
     const history = useHistory()
     const {
         courseList,
+        courseDetail,
         loading,
         error,
         loadingSendRequest,
@@ -93,7 +94,7 @@ const Course = ({ location }) => {
     }
 
     useEffect(() => {
-        if (!loadingCreate && !errorCreate) {
+        if (!loadingCreate && !errorCreate && courseDetail._id) {
             setMessage('Create course successful');
             setTimeout(() => {
                 resetField();
@@ -320,7 +321,7 @@ const Course = ({ location }) => {
                             <div class="row">
                                 {
                                     courseList?.data?.length > 0 ? courseList.data.map(course => (
-                                        <div class="col-12 col-lg-6 card-zoom">
+                                        <div class="col-12 col-lg-4 card-zoom">
                                             <Card
                                                 title={course.title}
                                                 avatar={`${AWS_FOLDER.IMAGE}${course.createdBy.profile.avatar}`}
@@ -339,10 +340,6 @@ const Course = ({ location }) => {
                                 courseList?.data?.length > 0 && (
                                     <div class="row">
                                         <div class="col-sm-12 col-md-5">
-
-                                            <div class="dataTables_info" id="default-datatable_info" role="status" aria-live="polite">
-                                                Showing {limit} of {total} courses
-                                    </div>
 
                                         </div>
                                         <div class="col-sm-12 col-md-7">

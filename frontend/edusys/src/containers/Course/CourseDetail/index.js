@@ -208,7 +208,7 @@ const CourseDetail = ({ match }) => {
                     <Figure.Image
                         height={180}
                         alt="171x180"
-                        src={previewBgImage ? previewBgImage : 'https://edusys-project.s3-ap-southeast-1.amazonaws.com/image/course.jpg'}
+                        src={previewBgImage ? previewBgImage : bgImage}
                     />
                     <Figure.Caption style={{ textAlign: 'center' }}>
                         {previewBgImage ? 'New background image' : 'Default background image'}

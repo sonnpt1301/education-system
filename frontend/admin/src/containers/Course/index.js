@@ -191,9 +191,7 @@ const Course = () => {
                     </div>
                     <div class="row">
                         <div class="col-sm-12 col-md-5">
-                            <div class="dataTables_info" id="default-datatable_info" role="status" aria-live="polite">
-                                Showing {limit} of {total} courses
-                    </div>
+                            
                         </div>
                         <div class="col-sm-12 col-md-7">
                             <ReactPaginate

@@ -34,7 +34,6 @@ export const getBlogService = async (blogId) => {
         const comments = await Comment.find({ blog: blog._id })
             .populate({ path: 'user', select: 'email profile.firstName profile.lastName profile.avatar' })
             .lean();
-        console.log(comments)
 
         response.data = {
             ...blog,

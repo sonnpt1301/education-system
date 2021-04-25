@@ -13,7 +13,7 @@ import { AWS_FOLDER, EDUSYS_BUCKET } from '../../common/enum.js';
 
 
 
-export const getCourseService = async (courseId, user = {}) => {
+export const getCourseService = async (courseId, user) => {
     const response = {
         statusCode: 200,
         message: 'Showing course successful',
@@ -21,11 +21,11 @@ export const getCourseService = async (courseId, user = {}) => {
     };
 
     try {
-        const checkUser = await UserCourse.findOne({
-            course: courseId,
-            user: user._id,
-        })
         if (user.profile.role === 'student') {
+            const checkUser = await UserCourse.findOne({
+                course: courseId,
+                user: user._id,
+            })
             if (!checkUser) {
                 return {
                     statusCode: 404,

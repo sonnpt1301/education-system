@@ -168,7 +168,7 @@ const Chat = () => {
                                 </span></div>
                                 <div className="card-body outer-message" style={{ padding: '0' }}>
                                     {
-                                        messages.map((msg, index) => (
+                                        messages.length > 0 ? messages.map((msg, index) => (
                                             <ul class="list-group" style={{ paddingTop: '5px' }}>
 
                                                 <li className="d-flex justify-content-between align-items-center list-friend-css"
@@ -189,7 +189,23 @@ const Chat = () => {
                                                     </div>
                                                 </li>
                                             </ul>
-                                        ))
+                                        )) : (
+                                            <>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <i>No message</i>
+                                                    <br />
+                                                </div>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <Button
+                                                        status='info'
+                                                        icon='fa fa-plus-circle'
+                                                        onClick={() => setShowCreateNewMessage(true)}
+                                                        F                                                    >
+                                                        New message
+                                            </Button>
+                                                </div>
+                                            </>
+                                        )
                                     }
 
                                 </div>
@@ -210,7 +226,7 @@ const Chat = () => {
 
                                 <div class="card-body outer-message" >
                                     {
-                                        messages[index]?.messages.map(msg => (
+                                        messages.length > 0 ? messages[index]?.messages.map(msg => (
                                             <div>
                                                 {
                                                     msg.sender._id !== user._id ? (
@@ -290,7 +306,9 @@ const Chat = () => {
                                                     )
                                                 }
                                             </div>
-                                        ))
+                                        )) : <div style={{ textAlign: 'center' }}>
+                                            <i>No message</i>
+                                        </div>
                                     }
 
                                     <div

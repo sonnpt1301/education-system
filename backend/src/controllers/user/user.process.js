@@ -44,7 +44,6 @@ export const listUserService = async (filter = {}, limit, skip, currentUser) => 
     };
 
     try {
-        console.log(filter)
         const filterUserList = {
             ...filter,
             isDeleted: false,

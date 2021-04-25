@@ -14,7 +14,7 @@ import { FileIcon, defaultStyles } from 'react-file-icon'
 const WaitingBlog = ({ showWaitingBlogModal, handleCloseWaitingBlogModal, status, courseId }) => {
 
     const dispatch = useDispatch()
-    const { blogList, loading, loadingUpdate, errorUpdate } = useSelector(state => state.blog)
+    const { blogList, loading, loadingUpdate, errorUpdate, blogDetail } = useSelector(state => state.blog)
 
     const [message, setMessage] = useState('')
 
@@ -23,7 +23,7 @@ const WaitingBlog = ({ showWaitingBlogModal, handleCloseWaitingBlogModal, status
     }
 
     useEffect(() => {
-        if (!loadingUpdate && !errorUpdate) {
+        if (!loadingUpdate && !errorUpdate && blogDetail._id) {
             setMessage('Approve successful');
             setTimeout(() => {
                 resetField();

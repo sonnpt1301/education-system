@@ -86,7 +86,7 @@ const BlogDetail = ({ showBlogDetailModal, handleCloseBlogDetailModal, blogId })
                             <div className="user-profile" style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                                 <div><img src={`${AWS_FOLDER.IMAGE}${blogDetail?.createdBy?.profile?.avatar}`}
                                     className="img-circle user-profile" alt="user avatar" /></div>
-                                <span><h5 className="mt-0 mb-1 ml-1">{blogDetail?.createdBy?.profile?.firstName + " " + blogDetail?.createdBy?.profile?.lastName}</h5></span>
+                                <span><h5 className="mt-0 mb-1 ml-1">{(blogDetail?.createdBy?.profile?.firstName || '') + " " + (blogDetail?.createdBy?.profile?.lastName || '')}</h5></span>
                             </div>
                             <img className="rounded" style={{ height: '100%', width: '100%' }} src={`${AWS_FOLDER.IMAGE}${blogDetail.bgImage}`} alt="user avatar" />
                             <ul className="list-unstyled">
