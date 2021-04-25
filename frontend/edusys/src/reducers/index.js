@@ -6,6 +6,7 @@ import userReducer from './user.reducer'
 import blogReducer from './blog.reducer'
 import chatReducer from './chat.reducer'
 import activityReducer from './activity.reducer'
+import userCourseReducer from './userCourse.reducer'
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     blog: blogReducer,
     chat: chatReducer,
     activity: activityReducer,
+    userCourse: userCourseReducer
 })
 
 export default rootReducer

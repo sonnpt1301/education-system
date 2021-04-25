@@ -9,12 +9,15 @@ import swal from 'sweetalert'
 import './style.css'
 import Message from '../../components/common/Message'
 import { Loader } from '../../components/common/Loader'
+import { getUserCourseInfoAction } from '../../actions/userCourse.action'
+import Card from '../../components/Card'
+import { NavLink } from 'react-bootstrap'
 
 const Profile = () => {
 
     const dispatch = useDispatch()
     const { user, loadingUpdate, errorUpdate } = useSelector(state => state.auth)
-
+    const { userCourse } = useSelector(state => state.userCourse)
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [address, setAddress] = useState('')
@@ -77,7 +80,7 @@ const Profile = () => {
     }
 
     useEffect(() => {
-        if (!loadingUpdate && !errorUpdate) {
+        if (!loadingUpdate && !errorUpdate && user._id) {
             setMessage('Update profile successful');
             setTimeout(() => {
                 resetField();
@@ -88,6 +91,7 @@ const Profile = () => {
 
     useEffect(() => {
         handleUpdateProfile()
+        dispatch(getUserCourseInfoAction())
     }, [dispatch, loadingUpdate])
 
 
@@ -165,6 +169,29 @@ const Profile = () => {
                                                     </p>
                                                 </div>
                                             </div>
+                                            {
+                                                user.profile.role === 'student' && (
+                                                    <>
+                                                        <h5 class="mb-3" style={{ textAlign: 'center' }}>Participated Course</h5>
+                                                            {
+                                                                userCourse.length > 0 ? userCourse.map((info) => (
+                                                                    <div class="col-12 col-lg-4">
+                                                                        <div class="card mb-3" style={{ cursor: 'pointer' }}>
+                                                                            <img
+                                                                                class="card-img-top"
+                                                                                src={`${AWS_FOLDER.IMAGE}${info.course.bgImage}`}
+                                                                                alt="course_image"
+                                                                                style={{ height: '150px' }}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                )) : <div style={{ textAlign: 'center' }}>
+                                                                    <i>You haven't join any course</i>
+                                                                </div>
+                                                            }
+                                                    </>
+                                                )
+                                            }
                                         </div>
                                         <div class="tab-pane" id="edit">
                                             <Input

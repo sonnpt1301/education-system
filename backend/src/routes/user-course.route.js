@@ -8,6 +8,7 @@ const router = express.Router();
 export default (prefix) => {
     prefix.use('/user-course', verifyToken, validateRole(['student']), router);
 
+    router.get('/', userCourseController.getUserCourseInfo)
     router.post('/send-request', userCourseController.requestToJoinCourse)
     router.post('/join-course', userCourseValidator.joinCourse, validateRequest, userCourseController.joinCourse)
 };

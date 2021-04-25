@@ -4,6 +4,23 @@ import { Course } from '../../models/course.model.js'
 import { mailer } from '../../common/mailer.js';
 import { renderFile } from 'ejs'
 
+export const getUserCourseInfoService = async (currentUser) => {
+    const response = {
+        statusCode: 200,
+        message: 'Success',
+        data: {}
+    }
+    try {
+        const userCourse = await UserCourse.find({ user: currentUser._id })
+            .populate({ path: 'course', select: 'title status bgImage' })
+        response.data = userCourse
+    } catch (err) {
+        response.statusCode = 500;
+        response.message = err.message;
+    }
+    return response
+}
+
 export const requestToJoinCourseService = async (userId, courseId) => {
     const response = {
         statusCode: 200,
@@ -81,7 +98,7 @@ export const joinCourseService = async (userId, courseId, secretKey) => {
             }
         }
 
-        if(secretKey !== course.secretKey){
+        if (secretKey !== course.secretKey) {
             return {
                 statusCode: 400,
                 message: 'Wrong secret key',
